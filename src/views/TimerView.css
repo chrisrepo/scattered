@@ -1,0 +1,22 @@
+#timer-view-container {
+  border-top: 3px solid #222;
+  height: 50%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#timer-header {
+  color: #222;
+  margin-top: -20px;
+  font-weight: bold;
+  font-size: 2em;
+}
+
+#timer {
+  color: #222;
+  font-weight: bold;
+  font-size: 8em;
+}

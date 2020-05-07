@@ -1,0 +1,15 @@
+#prompt-list {
+  overflow: hidden;
+  height: 100%;
+}
+
+#scattergories-view-container {
+  overflow: hidden;
+  height: 100%;
+}
+
+#prompt-list .input {
+  width: 40%;
+  opacity: 0;
+  height: 0px;
+}
