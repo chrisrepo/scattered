@@ -9,5 +9,29 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  font-size: 20em;
+  transition: font-size 1s;
+}
+
+@media (min-width: 1100px) {
+  #letter {
+    font-size: 20em;
+  }
+}
+
+@media (max-width: 1099px) {
+  #letter {
+    font-size: 14em;
+  }
+}
+
+@media (min-height: 645px) {
+  #letter {
+    font-size: 20em;
+  }
+}
+
+@media (max-height: 644px) {
+  #letter {
+    font-size: 14em;
+  }
 }

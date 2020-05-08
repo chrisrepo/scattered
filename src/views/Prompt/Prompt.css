@@ -3,28 +3,30 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  font-size: 2em;
   font-weight: 500;
-  margin: 0.5% 1%;
-  padding: 0.5% 1%;
   cursor: pointer;
   overflow: hidden;
   height: 50px;
+  white-space: nowrap;
+  transition: height 1s, width 1s, margin 1s, padding 1s;
 }
 
-.prompt-container .promptHint {
+.prompt-container .prompt-text {
+  transition: font-size 1s;
+}
+
+.prompt-container .prompt-hint {
   color: white;
   text-align: right;
-  font-size: 0.5em;
+  transition: font-size 1s;
 }
 
-.prompt-container .promptAnswer {
+.prompt-container .prompt-answer {
   color: white;
   background-color: #333333;
   padding: 1% 2%;
   text-align: right;
-  font-size: 0.5em;
-  height: 20px;
+  transition: font-size 1s;
 }
 
 .prompt-container .prompt {
@@ -50,4 +52,71 @@
   padding: 0% 2%;
   height: 0px;
   border: none;
+  transition: font-size 1s;
 }
+
+/* Browser sizes */
+@media (min-width: 1100px) {
+  .prompt-container .prompt-text,
+  .prompt-container input {
+    font-size: 1.75em;
+  }
+  .prompt-container .prompt-hint {
+    font-size: 1em;
+  }
+  .prompt-container .prompt-answer {
+    font-size: 1em;
+  }
+}
+
+@media (min-height: 750px) {
+  .prompt-container {
+    height: 50px;
+    margin: 0.5% 1%;
+    padding: 0.5% 1%;
+  }
+
+  .prompt-container .prompt-answer {
+    height: 20px;
+  }
+}
+
+@media (min-width: 700px) and (max-width: 1099px) {
+  .prompt-container .prompt-text,
+  .prompt-container input {
+    font-size: 1.25em;
+  }
+  .prompt-container .prompt-hint {
+    font-size: 0.9em;
+  }
+  .prompt-container .prompt-answer {
+    font-size: 0.9em;
+  }
+}
+
+@media (max-height: 749px) {
+  .prompt-container {
+    height: 40px;
+    margin: 0.35% 0.75%;
+    padding: 0.35% 0.75%;
+  }
+
+  .prompt-container .prompt-answer {
+    height: 16px;
+    font-size: 0.9em;
+  }
+}
+
+/*
+BROWSER SIZES TEMPLATE
+@media (min-width: 1100px) {
+}
+
+@media (max-width: 1099px) {
+}
+
+-webkit-transition: color 12s, font-size 12s;
+   -moz-transition: color 12s, font-size 12s;
+     -o-transition: color 12s, font-size 12s;
+        transition: color 12s, font-size 12s;
+*/

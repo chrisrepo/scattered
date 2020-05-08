@@ -1,10 +1,10 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import ScatterGameView from './views/ScatterGameView';
+import ScoringView from './views/EndRound/ScoringView';
 
 function App() {
-  return <ScatterGameView />;
+  return <ScoringView />;
 }
 
 export default App;

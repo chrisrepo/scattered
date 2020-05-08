@@ -2,6 +2,7 @@ import React from 'react';
 
 import PromptInput from './PromptInput';
 import PromptText from './PromptText';
+
 import './Prompt.css';
 const Prompt = ({ prompt, ind, selInd, onSelect }) => {
   let isSelected = ind === selInd;

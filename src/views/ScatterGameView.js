@@ -30,11 +30,15 @@ class ScatterGameView extends React.Component {
       (event.key === 'Enter' || event.key === 'Tab') &&
       this.props.selectedPrompt !== -1
     ) {
-      console.log('keypres');
-      if (this.props.selectedPrompt === this.props.prompts.length - 1) {
+      console.log('shiftkeypress?', event.shiftKey);
+      let move = event.shiftKey ? -1 : 1;
+      let out = event.shiftKey
+        ? this.props.selectedPrompt === 0
+        : this.props.selectedPrompt === this.props.prompts.length - 1;
+      if (out) {
         this.props.setSelectedPrompt(-1);
       } else {
-        this.props.setSelectedPrompt(this.props.selectedPrompt + 1);
+        this.props.setSelectedPrompt(this.props.selectedPrompt + move);
       }
     }
   };

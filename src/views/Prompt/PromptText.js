@@ -10,9 +10,11 @@ const PromptInput = ({ answerText, isSelected, index, prompt }) => {
   });
   return (
     <animated.div style={promptProps} className="prompt">
-      {index + 1}. {prompt}
-      {!answerText && <span className="promptHint">Click to answer</span>}
-      {answerText && <span className="promptAnswer">{answerText}</span>}
+      <span className="prompt-text">
+        {index + 1}. {prompt}
+      </span>
+      {!answerText && <span className="prompt-hint">Click to answer</span>}
+      {answerText && <span className="prompt-answer">{answerText}</span>}
     </animated.div>
   );
 };
