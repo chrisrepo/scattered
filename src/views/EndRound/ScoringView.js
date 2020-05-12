@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ScoringAnswerList from './ScoringAnswerList';
+import ScoringAnswerList from './AnswerList/ScoringAnswerList';
 import ScoringHeaderBar from './HeaderBar/ScoringHeaderBar';
 import './ScoringView.css';
 

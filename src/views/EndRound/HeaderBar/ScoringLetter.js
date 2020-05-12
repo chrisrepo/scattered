@@ -1,5 +1,6 @@
 import React from 'react';
 
+import './ScoringLetter.css';
 const ScoringLetter = () => {
   return (
     <div id="scoring-letter-container">

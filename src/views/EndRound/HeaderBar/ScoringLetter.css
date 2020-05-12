@@ -1,0 +1,7 @@
+#scoring-letter-container {
+  height: 100%;
+  font-size: 2em;
+  font-weight: bold;
+  text-align: center;
+  border-right: 1px solid grey;
+}

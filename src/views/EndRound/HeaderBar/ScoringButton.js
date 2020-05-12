@@ -1,5 +1,6 @@
 import React from 'react';
 
+import './ScoringButton.css';
 const ScoringButton = ({ text }) => {
   return (
     <div className="scoring-button-container">

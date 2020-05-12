@@ -3,83 +3,33 @@
   display: flex;
   flex-direction: row;
   font-size: 2em;
-  color: white;
-  background-color: #222;
+  box-shadow: 1px 1px 3px #999;
+  color: #222;
   justify-content: center;
   transition: font-size 1s, height 1s, line-height 1s;
   min-width: 700px;
 }
 
 #scoring-header-left {
-  width: 20%;
+  width: 10%;
 }
 
 #scoring-header-right {
-  width: 80%;
-}
-
-#scoring-header-top {
-  height: 60%;
-}
-
-#scoring-header-bottom {
-  height: 40%;
+  width: 90%;
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-#scoring-letter-container {
-  height: 100%;
-  font-size: 3em;
-  font-weight: bold;
-  text-align: center;
-  background: repeating-linear-gradient(
-    -55deg,
-    #333,
-    #333 5px,
-    #444 5px,
-    #444 10px
-  );
-}
-.scoring-button-container {
-  width: 10%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 1% 1%;
-  background-color: #6c757d;
-  transition: font-size 1s, height 1s, line-height 1s;
-}
-.scoring-button-container:first-child {
-  margin-right: 3%;
-}
-.scoring-button-container:last-child {
-  margin-left: 3%;
-}
-
-.scoring-button {
-  width: 80%;
-  color: #fff;
-  font-weight: 500;
-  text-align: center;
-}
-
-.scoring-button-container:hover {
-  background-color: #5a6268;
-  border-color: #545b62;
 }
 
 #scoring-prompt-container {
+  width: 80%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
 }
 
 #scoring-prompt {
   margin: 0% 2%;
+  font-size: 1em;
+  font-weight: 500;
   text-align: center;
   white-space: nowrap;
 }
@@ -87,28 +37,25 @@
 #scoring-prompt-header {
   font-size: 0.5em;
   text-align: center;
-  padding: 7px 20px;
+  padding: 4px 12px;
   font-weight: 500;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
-  background-color: #6c757d;
+  box-shadow: 1px 1px 3px #999;
 }
 
-/*
-@media (min-height: 645px) {
-  #scoring-header-bar {
-    height: 80px;
-    line-height: 80px;
-    font-size: 1.5em;
+@media (min-width: 1500px) {
+  #scoring-answer-list {
+    width: 60%;
   }
 }
-
-@media (max-height: 644px) {
-  #scoring-header-bar {
-    height: 60px;
-    line-height: 60px;
-    height: 60px;
-    font-size: 1em;
+@media (min-width: 1200px) and (max-width: 1499px) {
+  #scoring-answer-list {
+    width: 70%;
   }
 }
-*/
+@media (max-width: 1200px) {
+  #scoring-answer-list {
+    width: 80%;
+  }
+}

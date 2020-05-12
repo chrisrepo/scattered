@@ -1,0 +1,78 @@
+#scoring-answer-list {
+  margin-top: 2em;
+  display: flex;
+  flex-direction: column;
+  transition: width 1s;
+  min-width: 700px;
+}
+
+.scoring-answer-container {
+  margin-top: 0.5em;
+  display: flex;
+  flex-direction: row;
+  box-shadow: 1px 1px 3px #999;
+}
+.scoring-answer-container .score-text {
+  width: 95%;
+  display: flex;
+  flex-direction: row;
+}
+
+.scoring-answer-container .user {
+  width: 16%;
+  padding: 1% 2%;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.scoring-answer-container .border {
+  width: 1%;
+  margin: 3px;
+  border-left: 1px solid grey;
+}
+.scoring-answer-container .user-answer {
+  width: 78%;
+  padding: 1% 2%;
+}
+
+.scoring-answer-container .scoring-button {
+  min-width: 40px;
+  cursor: pointer;
+  width: 5%;
+  background-color: #999;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.scoring-answer-container .scoring-button:hover {
+  color: black;
+  background-color: #bbb;
+}
+
+.scoring-answer-container .scoring-button.scored {
+  background-color: #28a745 !important;
+}
+
+.scoring-answer-container .scoring-button.scored:hover {
+  background-color: #35d45a !important;
+}
+
+@media (min-width: 1500px) {
+  #scoring-answer-list {
+    width: 60%;
+  }
+}
+@media (min-width: 1200px) and (max-width: 1499px) {
+  #scoring-answer-list {
+    width: 70%;
+  }
+}
+@media (max-width: 1200px) {
+  #scoring-answer-list {
+    width: 80%;
+  }
+}

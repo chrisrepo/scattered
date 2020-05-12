@@ -11,13 +11,9 @@ const ScoringHeaderBar = () => {
         <ScoringLetter />
       </div>
       <div id="scoring-header-right">
-        <div id="scoring-header-top">
-          <ScoringPrompt />
-        </div>
-        <div id="scoring-header-bottom">
-          <ScoringButton text={'<'} />
-          <ScoringButton text={'>'} />
-        </div>
+        <ScoringButton text={'<'} />
+        <ScoringPrompt />
+        <ScoringButton text={'>'} />
       </div>
     </div>
   );
