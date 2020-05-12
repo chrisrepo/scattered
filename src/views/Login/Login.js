@@ -22,6 +22,7 @@ class Login extends React.Component {
 
     if (username.length > 0) {
       this.props.setUsername(username);
+      sessionStorage.setItem('sc-user', username);
       this.props.history.push('/lobby');
     }
   };
@@ -32,7 +33,12 @@ class Login extends React.Component {
         <h1>Scattergories</h1>
         <div id="login-field">
           <label id="login-label">Name</label>
-          <input id="login-input" ref={this.inputRef} type="text" />
+          <input
+            autoComplete="off"
+            id="login-input"
+            ref={this.inputRef}
+            type="text"
+          />
         </div>
         <button id="login-button" onClick={this.playButtonClicked}>
           Play

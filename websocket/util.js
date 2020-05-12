@@ -6,12 +6,12 @@ function getRoomUsers(roomObj, userList) {
   return roomUsers;
 }
 
-function getRoomCounts(rooms) {
+function getRoomData(rooms, userList) {
   const roomCounts = {};
   Object.keys(rooms).forEach((roomId) => {
-    roomCounts[roomId] = Object.keys(rooms[roomId].users).length;
+    roomCounts[roomId] = getRoomUsers(rooms[roomId], userList);
   });
   return roomCounts;
 }
 
-module.exports = { getRoomUsers };
+module.exports = { getRoomUsers, getRoomData };

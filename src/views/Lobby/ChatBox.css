@@ -1,0 +1,7 @@
+#chat-box {
+  width: 45%;
+  height: 100%;
+  margin: 0em 2em;
+  border: 3px solid #444;
+  box-shadow: 2px 2px 4px #999;
+}

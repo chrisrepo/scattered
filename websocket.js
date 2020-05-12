@@ -22,20 +22,22 @@ var roomList = {
   Lobby: {
     users: {},
   },
-  Room1: {
+  Charmander: {
     users: {},
   },
-  Room2: {
+  Squirtle: {
     users: {},
   },
-  Room3: {
+  Bulbasaur: {
+    users: {},
+  },
+  Pikachu: {
     users: {},
   },
 };
 var userList = {};
 //Setting up a socket with the namespace "connection" for new sockets
 io.on('connection', (socket) => {
-  console.log('userconnected', socket.id);
   socket.on('join-lobby', (data) => {
     socket.join('lobby');
     let { username } = data;
@@ -46,13 +48,16 @@ io.on('connection', (socket) => {
       id: socket.id,
       username,
     };
-    io.in('lobby').emit(
-      'emit-join-lobby',
-      utils.getRoomUsers(roomList.Lobby, userList)
-    );
+    io.in('lobby').emit('emit-join-lobby', {
+      roomId: 'Lobby',
+      roomData: utils.getRoomData(roomList, userList),
+    });
   });
 
+  // Called before socket actually disconnects from everything
   socket.on('disconnecting', () => {});
+
+  // Called after socket disconnects from everything
   socket.on('disconnect', () => {
     delete userList[socket.id];
     // Loop thru rooms deleting socket id
@@ -61,6 +66,8 @@ io.on('connection', (socket) => {
     });
   });
 
+  // Chat Logic
+  require('./websocket/chatWebsocket.js')(io, socket);
   // Game logic
   //require('./websocket/gameWebsocket.js')(io, socket, roomList, userList);
 });

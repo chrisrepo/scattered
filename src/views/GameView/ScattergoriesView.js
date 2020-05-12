@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Prompt from './Prompt/Prompt';
+import Prompt from '../Prompt/Prompt';
 import './ScattergoriesView.css';
 const ScattergoriesView = ({ prompts, selInd, onSelect, onKeyPress }) => {
   return (

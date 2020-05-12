@@ -5,7 +5,7 @@ import { Route, Router } from 'react-router-dom';
 
 import { setWebsocketConnection } from './redux/actions';
 import history from './utils/history';
-import ScatterGameView from './views/ScatterGameView';
+import ScatterGameView from './views/GameView/ScatterGameView';
 import ScoringView from './views/EndRound/ScoringView';
 import Login from './views/Login/Login';
 import './App.css';
@@ -48,7 +48,7 @@ class App extends React.Component {
         </Route>
         <Route path="/play" exact>
           <ScoringView />
-          <ScatterGameView />
+          {false && <ScatterGameView />}
         </Route>
       </Router>
     );

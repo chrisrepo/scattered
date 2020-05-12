@@ -1,12 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { setPrompts, setSelectedPrompt } from '../redux/actions';
+import { setPrompts, setSelectedPrompt } from '../../redux/actions';
 import LetterView from './LetterView';
 import TimerView from './TimerView';
 import ScattergoriesView from './ScattergoriesView';
 
-import { getPrompts } from '../utils/scattergories';
+import { getPrompts } from '../../utils/scattergories';
 
 import './ScatterGameView.css';
 class ScatterGameView extends React.Component {
