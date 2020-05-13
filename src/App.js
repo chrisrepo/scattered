@@ -1,7 +1,7 @@
 import React from 'react';
 import io from 'socket.io-client';
 import { connect } from 'react-redux';
-import { Route, Router } from 'react-router-dom';
+import { Route, Router, Switch } from 'react-router-dom';
 
 import { setWebsocketConnection } from './redux/actions';
 import history from './utils/history';
@@ -10,6 +10,7 @@ import ScoringView from './views/EndRound/ScoringView';
 import Login from './views/Login/Login';
 import './App.css';
 import LobbyView from './views/Lobby/LobbyView';
+import GameLobby from './views/Lobby/GameLobby';
 
 class App extends React.Component {
   constructor(props) {
@@ -40,16 +41,24 @@ class App extends React.Component {
     }
     return (
       <Router history={history}>
-        <Route path="/" exact>
-          <Login />
-        </Route>
-        <Route path="/lobby" exact>
-          <LobbyView />
-        </Route>
-        <Route path="/play" exact>
-          <ScoringView />
-          {false && <ScatterGameView />}
-        </Route>
+        <Switch>
+          <Route path="/" exact>
+            <Login />
+          </Route>
+          <Route path="/lobby" exact>
+            <LobbyView />
+          </Route>
+          <Route path="/lobby/:roomId" exact>
+            <GameLobby />
+          </Route>
+          <Route path="/lobby" exact>
+            <LobbyView />
+          </Route>
+          <Route path="/play" exact>
+            <ScoringView />
+            {false && <ScatterGameView />}
+          </Route>
+        </Switch>
       </Router>
     );
   }

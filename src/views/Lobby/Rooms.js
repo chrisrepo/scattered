@@ -1,7 +1,16 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
+import { setRoom } from '../../redux/actions';
 import './Rooms.css';
 class Rooms extends React.Component {
+  switchRoom = (roomId) => {
+    this.props.ws.emit('switch-room', { roomId, oldId: this.props.roomId });
+    this.props.setRoom(roomId);
+    this.props.history.push(`/lobby/${roomId}`);
+  };
+
   renderRooms() {
     const keys = Object.keys(this.props.rooms).filter(
       (key) => key !== this.props.roomId
@@ -11,7 +20,7 @@ class Rooms extends React.Component {
       const roomData = this.props.rooms[key];
       const playerCount = Object.keys(roomData).length;
       return (
-        <div key={key} className="room">
+        <div key={key} className="room" onClick={() => this.switchRoom(key)}>
           <h2 className="room-name">{key}</h2>
           <p className="room-players">{playerCount} Players</p>
         </div>
@@ -24,4 +33,9 @@ class Rooms extends React.Component {
   }
 }
 
-export default Rooms;
+const mapStateToProps = (state) => {
+  return {
+    ws: state.connection,
+  };
+};
+export default connect(mapStateToProps, { setRoom })(withRouter(Rooms));

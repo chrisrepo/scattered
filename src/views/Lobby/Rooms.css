@@ -6,7 +6,6 @@
 }
 
 .room {
-  width: 340px;
   height: 120px;
   margin: 1em;
   cursor: pointer;
@@ -31,4 +30,15 @@
   text-align: center;
   color: #666;
   font-weight: 500;
+}
+
+@media (min-width: 1000px) {
+  .room {
+    width: 340px;
+  }
+}
+@media (max-width: 999px) {
+  .room {
+    width: 140px;
+  }
 }

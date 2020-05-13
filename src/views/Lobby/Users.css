@@ -1,0 +1,29 @@
+#user-list-container {
+  border: 3px solid #444;
+  height: 25%;
+  margin-bottom: 2%;
+  box-shadow: 2px 2px 4px #999;
+}
+
+#user-list-header {
+  text-align: center;
+  font-size: 1.75em;
+  font-weight: 700;
+}
+
+#user-list {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+#user-list .user {
+  font-size: 1.3em;
+}
+
+.user {
+  margin: 5px 10px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: white;
+  box-shadow: 2px 2px 5px #999;
+}

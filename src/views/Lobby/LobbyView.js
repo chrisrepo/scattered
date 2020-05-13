@@ -30,14 +30,22 @@ class LobbyView extends React.Component {
     };
     this.props.ws.emit('join-lobby', body);
   }
+
+  componentWillUnmount() {
+    this.props.ws.off('emit-join-lobby');
+  }
+
   render() {
+    if (!this.props.ws || this.props.lobby.roomId !== 'Lobby') {
+      return <div>LOADING</div>;
+    }
     return (
       <div id="lobby-view">
         <Rooms
           roomId={this.props.lobby.roomId}
           rooms={this.props.lobby.roomData}
         />
-        <ChatBox />
+        <ChatBox room={this.props.lobby.roomData[this.props.lobby.roomId]} />
       </div>
     );
   }

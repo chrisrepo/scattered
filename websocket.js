@@ -39,7 +39,7 @@ var userList = {};
 //Setting up a socket with the namespace "connection" for new sockets
 io.on('connection', (socket) => {
   socket.on('join-lobby', (data) => {
-    socket.join('lobby');
+    socket.join('Lobby');
     let { username } = data;
     // Add user to lobby
     roomList.Lobby.users[socket.id] = { id: socket.id };
@@ -48,7 +48,7 @@ io.on('connection', (socket) => {
       id: socket.id,
       username,
     };
-    io.in('lobby').emit('emit-join-lobby', {
+    io.in('Lobby').emit('emit-join-lobby', {
       roomId: 'Lobby',
       roomData: utils.getRoomData(roomList, userList),
     });
