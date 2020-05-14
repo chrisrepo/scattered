@@ -1,0 +1,6 @@
+#game-lobby-container {
+  margin-top: 2em;
+  display: flex;
+  justify-content: space-evenly;
+  height: 90%;
+}

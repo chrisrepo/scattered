@@ -42,15 +42,16 @@ io.on('connection', (socket) => {
     socket.join('Lobby');
     let { username } = data;
     // Add user to lobby
-    roomList.Lobby.users[socket.id] = { id: socket.id };
+    roomList.Lobby.users[socket.id] = { id: socket.id, username };
     // Create user entry in main container
     userList[socket.id] = {
       id: socket.id,
       username,
     };
-    io.in('Lobby').emit('emit-join-lobby', {
-      roomId: 'Lobby',
-      roomData: utils.getRoomData(roomList, userList),
+    let roomId = 'Lobby';
+    io.in(roomId).emit('emit-join-lobby', {
+      roomId,
+      roomData: roomList,
     });
   });
 
@@ -67,7 +68,7 @@ io.on('connection', (socket) => {
   });
 
   // Chat Logic
-  require('./websocket/chatWebsocket.js')(io, socket);
+  require('./websocket/chatWebsocket.js')(io, socket, roomList, userList);
   // Game logic
   //require('./websocket/gameWebsocket.js')(io, socket, roomList, userList);
 });

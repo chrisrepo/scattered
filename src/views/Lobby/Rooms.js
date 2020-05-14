@@ -15,9 +15,10 @@ class Rooms extends React.Component {
     const keys = Object.keys(this.props.rooms).filter(
       (key) => key !== this.props.roomId
     );
-    console.log(keys, this.props.roomId);
     return keys.map((key) => {
-      const roomData = this.props.rooms[key];
+      const roomData = this.props.rooms[key].users
+        ? this.props.rooms[key].users
+        : {};
       const playerCount = Object.keys(roomData).length;
       return (
         <div key={key} className="room" onClick={() => this.switchRoom(key)}>

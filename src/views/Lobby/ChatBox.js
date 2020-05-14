@@ -8,7 +8,7 @@ class ChatBox extends React.Component {
   render() {
     return (
       <div id="chat-box">
-        <Users users={this.props.room} />
+        <Users users={this.props.room.users} />
         <Chat />
       </div>
     );

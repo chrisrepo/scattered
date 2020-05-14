@@ -14,7 +14,7 @@ export const setRoom = (roomId) => ({
   payload: roomId,
 });
 
-export const setRoomData = (roomList) => ({
+export const setRoomData = (roomData) => ({
   type: LOBBY_ACTIONS.SET_ROOM_DATA,
-  payload: roomList,
+  payload: roomData,
 });

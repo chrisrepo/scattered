@@ -6,12 +6,20 @@ function getRoomUsers(roomObj, userList) {
   return roomUsers;
 }
 
-function getRoomData(rooms, userList) {
-  const roomCounts = {};
-  Object.keys(rooms).forEach((roomId) => {
-    roomCounts[roomId] = getRoomUsers(rooms[roomId], userList);
-  });
-  return roomCounts;
+function getRoomData(room, userList) {
+  return getRoomUsers(room, userList);
 }
 
-module.exports = { getRoomUsers, getRoomData };
+function updateHost(roomList, roomId) {
+  let users = roomList[roomId].users;
+  let userKeys = Object.keys(users);
+  if (userKeys.length === 0) {
+    // remove host
+    roomList[roomId].host = null;
+  } else if (userKeys.length === 1) {
+    // First to join is the host
+    roomList[roomId].host = userKeys[0];
+  }
+  // Otherwise don't update
+}
+module.exports = { getRoomUsers, getRoomData, updateHost };
