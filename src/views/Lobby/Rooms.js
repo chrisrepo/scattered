@@ -20,10 +20,14 @@ class Rooms extends React.Component {
         ? this.props.rooms[key].users
         : {};
       const playerCount = Object.keys(roomData).length;
+      const playerText = playerCount === 1 ? ' Player' : ' Players';
       return (
         <div key={key} className="room" onClick={() => this.switchRoom(key)}>
           <h2 className="room-name">{key}</h2>
-          <p className="room-players">{playerCount} Players</p>
+          <p className="room-players">
+            {playerCount}
+            {playerText}
+          </p>
         </div>
       );
     });
