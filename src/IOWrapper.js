@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import io from 'socket.io-client';
-
 import {
   setWebsocketConnection,
   setRoomData,
@@ -21,23 +20,31 @@ class IOWrapper extends React.Component {
       this.onWebsocketConnect(ws);
       const pathname = window.location.pathname;
       // Reconnection/Connection logic
-      if (pathname.indexOf('lobby') !== -1) {
-        console.log('handle lobby connection');
-        this.handleLobbyConnection();
-        const newRoom = getRoomIdFromPathName(pathname);
-        if (newRoom !== 'Lobby') {
-          this.props.ws.emit('switch-room', {
-            roomId: newRoom,
-            oldId: 'Lobby',
-          });
-          this.props.setRoom(newRoom);
-        }
-      }
+      console.log('on connect', pathname);
+      this.handleLobbyConnection();
     });
 
     ws.on('update-room', (data) => {
       console.log('update -room', data.roomData);
       this.props.setRoomData(data.roomData);
+    });
+
+    ws.on('emit-join-lobby', (data) => {
+      this.props.setRoom(data.roomId);
+      this.props.setRoomData(data.roomData);
+      const pathname = window.location.pathname;
+      const newRoom = getRoomIdFromPathName(pathname);
+      if (!newRoom) {
+        return;
+      }
+      console.log('new room: ', newRoom, ' from', pathname);
+      if (newRoom !== 'Lobby') {
+        this.props.ws.emit('switch-room', {
+          roomId: newRoom,
+          oldId: 'Lobby',
+        });
+        this.props.setRoom(newRoom);
+      }
     });
   }
 
@@ -45,6 +52,7 @@ class IOWrapper extends React.Component {
     window.onpopstate = this.onBackButtonEvent;
   }
 
+  // Page reload logic
   handleLobbyConnection = () => {
     // Reroute if username empty
     let username = sessionStorage.getItem('sc-user');
@@ -63,7 +71,7 @@ class IOWrapper extends React.Component {
   };
 
   onBackButtonEvent = (event) => {
-    //Detected a back button event
+    //Detected a back button event & make sure redux knows about it
     let movingTo = getRoomIdFromPathName(window.location.pathname);
     console.log('Moving to: ', movingTo, ' from: ', this.props.curRoomId);
     if (movingTo) {

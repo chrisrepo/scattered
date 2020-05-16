@@ -19,10 +19,12 @@ class Rooms extends React.Component {
       const roomData = this.props.rooms[key].users
         ? this.props.rooms[key].users
         : {};
+      const hasStarted = this.props.rooms[key].started ? 'In Game' : 'In Lobby';
       const playerCount = Object.keys(roomData).length;
       const playerText = playerCount === 1 ? ' Player' : ' Players';
       return (
         <div key={key} className="room" onClick={() => this.switchRoom(key)}>
+          <div className="game-state">{hasStarted}</div>
           <h2 className="room-name">{key}</h2>
           <p className="room-players">
             {playerCount}

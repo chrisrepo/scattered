@@ -6,7 +6,12 @@ export const getPrompts = (numOfPrompts) => {
 };
 
 export const isHost = (lobby, ws) => {
-  if (ws && lobby && ws.id === lobby.roomData[lobby.roomId].host) {
+  if (
+    ws &&
+    lobby &&
+    lobby.roomData[lobby.roomId] &&
+    ws.id === lobby.roomData[lobby.roomId].host
+  ) {
     return true;
   }
   return false;

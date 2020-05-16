@@ -3,12 +3,11 @@ import { connect } from 'react-redux';
 import { Route, Router, Switch } from 'react-router-dom';
 
 import history from './utils/history';
-import ScatterGameView from './views/GameView/ScatterGameView';
-import ScoringView from './views/EndRound/ScoringView';
 import Login from './views/Login/Login';
 import './App.css';
 import LobbyView from './views/Lobby/LobbyView';
 import GameLobby from './views/Lobby/GameLobby';
+import GameView from './views/GameView/GameView';
 
 class App extends React.Component {
   render() {
@@ -27,9 +26,8 @@ class App extends React.Component {
           <Route path="/lobby" exact>
             <LobbyView />
           </Route>
-          <Route path="/play" exact>
-            <ScoringView />
-            {false && <ScatterGameView />}
+          <Route path="/game/:roomId" exact>
+            <GameView />
           </Route>
         </Switch>
       </Router>

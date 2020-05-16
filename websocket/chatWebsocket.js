@@ -11,6 +11,9 @@ module.exports = function (io, socket, roomList, userList) {
 
   socket.on('switch-room', (data) => {
     const { roomId, oldId } = data;
+    if (oldId === roomId) {
+      return;
+    }
     socket.leave(oldId);
     delete roomList[oldId].users[socket.id];
     utils.updateHost(roomList, oldId);

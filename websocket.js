@@ -4,7 +4,7 @@ const socketIo = require('socket.io');
 const path = require('path');
 
 const utils = require('./websocket/util.js');
-
+const { GAME_STATUS } = require('./websocket/constants');
 const port = process.env.PORT || 3001;
 
 //Setting up express and adding socketIo middleware
@@ -18,23 +18,58 @@ app.get('/*', (req, res) => {
 });
 
 // Websocket vars
+// Tracks who's in each room & who the host is
 var roomList = {
   Lobby: {
     users: {},
   },
   Charmander: {
     users: {},
+    started: false,
   },
   Squirtle: {
     users: {},
+    started: false,
   },
   Bulbasaur: {
     users: {},
+    started: false,
   },
   Pikachu: {
     users: {},
+    started: false,
   },
 };
+// Second tracking var just for games
+var gameList = {
+  Charmander: {
+    timePerRound: 120, // TODO: maybe create config for defaults (this & prompt count/ round count)
+    round: 0,
+    gameStatus: GAME_STATUS.PRE_ROUND,
+    answers: [], // array of answers (indexed by question number)
+    // each index will have a map where each key is a socket id of a playing user
+    // answer will be key= socket.id value={text: answer, username: user.username, earnedPoint: false}
+  },
+  Squirtle: {
+    timePerRound: 120,
+    round: 0,
+    gameStatus: GAME_STATUS.PRE_ROUND,
+    answers: [],
+  },
+  Bulbasaur: {
+    timePerRound: 120,
+    round: 0,
+    gameStatus: GAME_STATUS.PRE_ROUND,
+    answers: [],
+  },
+  Pikachu: {
+    timePerRound: 120,
+    round: 0,
+    gameStatus: GAME_STATUS.PRE_ROUND,
+    answers: [],
+  },
+};
+
 var userList = {};
 //Setting up a socket with the namespace "connection" for new sockets
 io.on('connection', (socket) => {
@@ -70,7 +105,13 @@ io.on('connection', (socket) => {
   // Chat Logic
   require('./websocket/chatWebsocket.js')(io, socket, roomList, userList);
   // Game logic
-  //require('./websocket/gameWebsocket.js')(io, socket, roomList, userList);
+  require('./websocket/gameWebsocket.js')(
+    io,
+    socket,
+    roomList,
+    userList,
+    gameList
+  );
 });
 /*
 function setupAuthoritativePhaser() {

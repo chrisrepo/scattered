@@ -6,9 +6,11 @@ import LetterView from './LetterView';
 import TimerView from './TimerView';
 import ScattergoriesView from './ScattergoriesView';
 
-import { getPrompts } from '../../utils/scattergories';
+import { getPrompts, isHost } from '../../utils/scattergories';
+import { setLetter } from '../../redux/actions';
 
 import './ScatterGameView.css';
+import HostActions from './HostActions';
 class ScatterGameView extends React.Component {
   constructor() {
     super();
@@ -19,12 +21,19 @@ class ScatterGameView extends React.Component {
 
   componentDidMount() {
     this.props.setPrompts(getPrompts(10));
+    this.props.ws.on('emit-change-letter', (data) => {
+      console.log('emit change letter', data);
+      let { letter } = data;
+      this.props.setLetter(letter);
+    });
   }
 
   onSelect = (ind) => {
     this.props.setSelectedPrompt(ind);
   };
 
+  // Handle Enter/Shift/Shift+Tab events for easy prompt navigation
+  // TODO: probably should move this to subcomponent
   onKeyPress = (event) => {
     if (
       (event.key === 'Enter' || event.key === 'Tab') &&
@@ -44,10 +53,14 @@ class ScatterGameView extends React.Component {
   };
 
   render() {
+    let hosting = isHost(this.props.lobby, this.props.ws);
     return (
       <div id="scatter-game-view">
         <div id="scatter-game-left">
-          <LetterView letter={'F'} />
+          <LetterView
+            isHost={hosting}
+            letter={this.props.gameFlow.currentLetter}
+          />
           <TimerView timeLeft={120} />
         </div>
         <div id="scatter-game-right">
@@ -67,8 +80,15 @@ const mapStateToProps = (state) => {
   return {
     prompts: state.game.prompts,
     selectedPrompt: state.game.selectedPrompt,
+    user: state.user,
+    ws: state.connection,
+    lobby: state.lobby,
+    gameFlow: state.gameFlow,
   };
 };
-export default connect(mapStateToProps, { setPrompts, setSelectedPrompt })(
-  ScatterGameView
-);
+
+export default connect(mapStateToProps, {
+  setPrompts,
+  setSelectedPrompt,
+  setLetter,
+})(ScatterGameView);

@@ -4,11 +4,23 @@ import { withRouter } from 'react-router-dom';
 
 import './HostOptions.css';
 class HostOptions extends React.Component {
+  onStartGameClicked = () => {
+    this.props.ws.emit('host-start-game', { roomId: this.props.lobby.roomId });
+  };
+
   render() {
     if (!this.props.ws || this.props.lobby.roomId === 'Lobby') {
       return <div>LOADING</div>;
     }
-    return <div id="game-room-container">test game room</div>;
+    return (
+      <div id="game-room-container">
+        <h2>Game Options</h2>
+        <p>Currently in development</p>
+        <div id="start-game-button" onClick={this.onStartGameClicked}>
+          Start Game
+        </div>
+      </div>
+    );
   }
 }
 const mapStateToProps = (state) => {

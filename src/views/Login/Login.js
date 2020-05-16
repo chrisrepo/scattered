@@ -24,6 +24,10 @@ class Login extends React.Component {
       this.props.setUsername(username);
       sessionStorage.setItem('sc-user', username);
       this.props.history.push('/lobby');
+      const body = {
+        username,
+      };
+      this.props.ws.emit('join-lobby', body);
     }
   };
 
