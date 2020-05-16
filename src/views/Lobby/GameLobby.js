@@ -5,11 +5,16 @@ import { withRouter } from 'react-router-dom';
 import ChatBox from './ChatBox';
 import HostOptions from './HostOptions';
 import { isHost } from '../../utils/scattergories';
+import { setPrompts, setLetter } from '../../redux/actions';
 import './GameLobby.css';
 class GameLobby extends React.Component {
   componentDidMount() {
     const route = `/game/${this.props.lobby.roomId}`;
     this.props.ws.on('emit-start-game', (data) => {
+      // TODO: on rejoin, there will probably be more data to handle from this emit
+      let { letter, prompts } = data;
+      this.props.setLetter(letter);
+      this.props.setPrompts(prompts);
       this.props.history.push(route);
     });
   }
@@ -45,4 +50,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(withRouter(GameLobby));
+export default connect(mapStateToProps, { setLetter, setPrompts })(
+  withRouter(GameLobby)
+);

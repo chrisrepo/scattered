@@ -3,6 +3,7 @@ const http = require('http');
 const socketIo = require('socket.io');
 const path = require('path');
 
+const utils = require('./websocket/util.js');
 const { GAME_STATUS } = require('./websocket/constants');
 const port = process.env.PORT || 3001;
 
@@ -48,24 +49,28 @@ var gameList = {
     answers: [], // array of answers (indexed by question number)
     // each index will have a map where each key is a socket id of a playing user
     // answer will be key= socket.id value={text: answer, username: user.username, earnedPoint: false}
+    prompts: [],
   },
   Squirtle: {
     timePerRound: 120,
     round: 0,
     gameStatus: GAME_STATUS.PRE_ROUND,
     answers: [],
+    prompts: [],
   },
   Bulbasaur: {
     timePerRound: 120,
     round: 0,
     gameStatus: GAME_STATUS.PRE_ROUND,
     answers: [],
+    prompts: [],
   },
   Pikachu: {
     timePerRound: 120,
     round: 0,
     gameStatus: GAME_STATUS.PRE_ROUND,
     answers: [],
+    prompts: [],
   },
 };
 
@@ -95,19 +100,23 @@ io.on('connection', (socket) => {
   });
 
   // Called before socket actually disconnects from everything
-  socket.on('disconnecting', () => {});
-
-  // Called after socket disconnects from everything
-  socket.on('disconnect', () => {
-    delete userList[socket.id];
-    // Loop thru rooms deleting socket id
+  socket.on('disconnecting', () => {
+    userList[socket.id] = [];
     Object.keys(roomList).forEach((key) => {
       if (roomList[key].users[socket.id]) {
         delete roomList[key].users[socket.id];
+        userList[socket.id].push(key); // track rooms we are leaving for other disconnect funcs
+        utils.updateHost(roomList, key);
         io.in(key).emit('update-room', { roomData: roomList });
       }
     });
     io.in('Lobby').emit('update-room', { roomData: roomList });
+  });
+
+  // Called after socket disconnects from everything
+  socket.on('disconnect', () => {
+    // Finally remove user from userlist
+    delete userList[socket.id];
   });
 
   // Chat Logic

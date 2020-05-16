@@ -9,7 +9,7 @@ import {
   setRoom,
   setUsername,
 } from './redux/actions';
-import { getRoomIdFromPathName } from './utils/history';
+import { getRoomIdFromPathName, isGame } from './utils/history';
 
 class IOWrapper extends React.Component {
   constructor(props) {
@@ -17,13 +17,11 @@ class IOWrapper extends React.Component {
     this.state = {
       isConnecting: true,
     };
-    console.log('constructing');
     const ws = io();
     ws.on('connect', () => {
       this.onWebsocketConnect(ws);
       const pathname = window.location.pathname;
       // Reconnection/Connection logic
-      console.log('on connect', pathname, ws);
       if (pathname !== '/') {
         this.handleInitialConnection(ws);
       }
@@ -32,13 +30,11 @@ class IOWrapper extends React.Component {
     ws.on('log-in-success', () => {
       const pathname = window.location.pathname;
       if (pathname !== '/') {
-        console.log('log-in-success');
         this.joinInitialRoom();
       }
     });
 
     ws.on('update-room', (data) => {
-      console.log('update -room', data.roomData);
       this.props.setRoomData(data.roomData);
     });
   }
@@ -50,10 +46,16 @@ class IOWrapper extends React.Component {
   joinInitialRoom = () => {
     let joining = getRoomIdFromPathName(window.location.pathname);
     if (joining) {
+      let joiningGameRoom = isGame(window.location.pathname);
       this.props.ws.emit('switch-room', {
         roomId: joining,
       });
       this.props.setRoom(joining);
+      // If they're joining a game room, send them back to game lobby (so they can rejoin the game)
+      //    easier than saving data right here saying we are reconnecting to game, then on next update-room (which has all initial room data), actually doing the work
+      if (joiningGameRoom) {
+        this.props.history.push(`/lobby/${joining}`);
+      }
     }
   };
 
@@ -71,14 +73,12 @@ class IOWrapper extends React.Component {
     const body = {
       username,
     };
-    console.log('emit login IOWrap', body, this.props.ws);
     this.props.ws.emit('log-in', body);
   };
 
   onBackButtonEvent = (event) => {
     //Detected a back button event & make sure redux knows about it
     let movingTo = getRoomIdFromPathName(window.location.pathname);
-    console.log('Moving to: ', movingTo, ' from: ', this.props.curRoomId);
     if (movingTo) {
       this.props.ws.emit('switch-room', {
         roomId: movingTo,
@@ -105,6 +105,7 @@ const mapStateToProps = (state) => ({
   ws: state.connection,
   curRoomId: state.lobby.roomId,
   user: state.user,
+  lobby: state.lobby,
 });
 export default connect(mapStateToProps, {
   setWebsocketConnection,

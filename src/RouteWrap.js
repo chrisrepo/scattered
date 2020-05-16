@@ -16,7 +16,6 @@ const RouteWrap = ({ children, ws }) => {
     return <LoadingSpinner size={100} />; // TODO: Better load screen
   }*/
   let showLoad = ws === null || isLoading;
-  console.log('show load: ', showLoad);
   return (
     <React.Fragment>
       <LoadingSpinner loading={showLoad} size={100} />

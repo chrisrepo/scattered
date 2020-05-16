@@ -1,12 +1,10 @@
 const { GAME_STATUS } = require('./constants');
-const { getLetter } = require('./gameUtil');
+const { getLetter, getPrompts, resetGame } = require('./gameUtil');
 const LETTERS = require('../src/constants/letters');
-const PROMPTS = require('../src/constants/categories');
 
 let guessTimeout;
 function startRoundTimer(io, lobby, game, roomId) {
-  //io.in(roomId).emit('emit-paint-start-timer');
-  io.in(roomId).emit('emit-start-round');
+  io.in(roomId).emit('emit-start-round', game);
   guessTimeout = setTimeout(() => {
     endRound(io, lobby, roomId);
   }, game.timePerRound * 1000);
@@ -14,7 +12,7 @@ function startRoundTimer(io, lobby, game, roomId) {
 
 function endRound(io, lobby, game, roomId) {
   clearTimeout(guessTimeout);
-  game[roomId].gameStatus = GAME_STATUS.SCORING;
+  game.gameStatus = GAME_STATUS.SCORING;
   io.in(roomId).emit('emit-end-round');
 }
 
@@ -36,14 +34,24 @@ module.exports = function (io, socket, roomList, userList, gameList) {
     let { roomId } = data;
     if (roomList[roomId].started) {
       // Only talk to this socket since they are joining in progress
-      io.to(socket.id).emit('emit-start-game');
+      //TODO: get current game data to update user
+      const roundNum = gameList[roomId].round;
+      const letter = gameList[roomId].letter;
+      const prompts = gameList[roomId].prompts[roundNum];
+      io.to(socket.id).emit('emit-start-game', { letter, prompts });
     } else {
       roomList[roomId].started = true;
-      console.log('game started by host in room: ', roomId);
       // This will move clients to the game view
       io.in('Lobby').emit('update-room', { roomData: roomList });
       io.in(roomId).emit('update-room', { roomData: roomList });
-      io.in(roomId).emit('emit-start-game');
+
+      //TODO: get
+      const letter = getLetter(LETTERS);
+      const prompts = getPrompts(10); // TODO: maybe customize # of prompts
+      const roundNum = gameList[roomId].round;
+      gameList[roomId].letter = letter;
+      gameList[roomId].prompts[roundNum] = prompts;
+      io.in(roomId).emit('emit-start-game', { letter, prompts });
     }
   });
 
@@ -57,7 +65,7 @@ module.exports = function (io, socket, roomList, userList, gameList) {
       // Round # will correspond to answers[] where round - 1  = the index for that round
 
       // Start timer and game loop
-      startRoundTimer(io, roomList, gameList, roomId);
+      startRoundTimer(io, roomList, gameList[roomId], roomId);
     }
   });
 
@@ -78,9 +86,7 @@ module.exports = function (io, socket, roomList, userList, gameList) {
 
   socket.on('host-change-letter', (data) => {
     let { roomId, curLetter } = data;
-    //TODO: Get new letter and emit it
     const newLetter = getLetter(LETTERS, curLetter);
-    console.log('change letter in room', roomId, newLetter);
     io.in(roomId).emit('emit-change-letter', { letter: newLetter });
   });
 
@@ -99,7 +105,16 @@ module.exports = function (io, socket, roomList, userList, gameList) {
     }
   });
 
-  socket.on('on-paint', (data) => {});
-
-  socket.on('paint-guess-word', (data) => {});
+  // Called before socket actually disconnects from everything
+  socket.on('disconnecting', () => {
+    let rooms = userList[socket.id];
+    // Loop thru rooms deleting socket id
+    rooms.forEach((key) => {
+      if (Object.keys(roomList[key].users).length === 0) {
+        // Last user left, reset all game data
+        resetGame(gameList, key);
+        // After this, websocket.js will handle removal of user from rooms
+      }
+    });
+  });
 };

@@ -9,7 +9,6 @@ import './Prompt.css';
 const Prompt = ({ prompt, ind, selInd, onSelect, status }) => {
   let isSelected = ind === selInd;
   let show = status !== GAME_STATUS.PRE_ROUND;
-  console.log('show prompt', status !== GAME_STATUS.PRE_ROUND);
   const containerProps = useSpring({
     backgroundColor: show ? 'unset' : '#222',
     height: show ? '0%' : '100%',
