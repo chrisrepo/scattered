@@ -3,7 +3,7 @@ const utils = require('./util.js');
 function leaveRoom(oldId, roomList, socket) {
   socket.leave(oldId);
   delete roomList[oldId].users[socket.id];
-  utils.updateHost(roomList, oldId);
+  utils.updateHost(roomList, oldId, socket.id);
 }
 
 function joinRoom(roomId, roomList, socket, userList) {

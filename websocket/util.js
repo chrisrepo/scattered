@@ -10,7 +10,7 @@ function getRoomData(room, userList) {
   return getRoomUsers(room, userList);
 }
 
-function updateHost(roomList, roomId) {
+function updateHost(roomList, roomId, leavingId) {
   let users = roomList[roomId].users;
   let userKeys = Object.keys(users);
   if (userKeys.length === 0) {
@@ -19,6 +19,8 @@ function updateHost(roomList, roomId) {
     roomList[roomId].host = null;
   } else if (userKeys.length === 1) {
     // First to join is the host
+    roomList[roomId].host = userKeys[0];
+  } else if (roomList[roomId].host === leavingId) {
     roomList[roomId].host = userKeys[0];
   }
   // Otherwise don't update

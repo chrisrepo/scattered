@@ -2,12 +2,12 @@ import React from 'react';
 
 import HostActions from './HostActions';
 import './LetterView.css';
-const LetterView = ({ letter, isHost }) => {
+const LetterView = ({ letter, roundStarted, isHost }) => {
   //TODO: Use 'isHost' instead of true after finished implementation
 
   return (
     <div id="letter-view-container">
-      {true && <HostActions />}
+      {isHost && <HostActions roundStarted={roundStarted} />}
       <div id="letter">{letter}</div>
     </div>
   );

@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import './HostActions.css';
 
-const HostActions = ({ ws, roomId, flow }) => {
+const HostActions = ({ ws, roomId, flow, roundStarted }) => {
   // TODO: Maybe put actions somewhere else
   const changeLetter = () => {
     ws.emit('host-change-letter', { roomId, curLetter: flow.currentLetter });
@@ -20,10 +20,21 @@ const HostActions = ({ ws, roomId, flow }) => {
       Start Round
     </div>
   );
+
+  const endRound = () => {
+    ws.emit('host-end-round', { roomId });
+  };
+  const endRoundAction = (
+    <div className="host-action danger" onClick={endRound}>
+      End Round Early
+    </div>
+  );
+
   return (
     <div id="host-actions-container">
-      {changeLetterAction}
-      {startRoundAction}
+      {!roundStarted && changeLetterAction}
+      {!roundStarted && startRoundAction}
+      {roundStarted && endRoundAction}
     </div>
   );
 };

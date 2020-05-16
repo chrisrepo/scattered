@@ -79,7 +79,6 @@ var userList = {};
 io.on('connection', (socket) => {
   socket.on('log-in', (data) => {
     let { username } = data;
-    console.log('user login: ', data, socket.id);
     userList[socket.id] = {
       id: socket.id,
       username,
@@ -106,7 +105,7 @@ io.on('connection', (socket) => {
       if (roomList[key].users[socket.id]) {
         delete roomList[key].users[socket.id];
         userList[socket.id].push(key); // track rooms we are leaving for other disconnect funcs
-        utils.updateHost(roomList, key);
+        utils.updateHost(roomList, key, socket.id);
         io.in(key).emit('update-room', { roomData: roomList });
       }
     });

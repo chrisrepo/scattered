@@ -11,8 +11,8 @@ import {
   setSelectedPrompt,
   setGameStatus,
 } from '../../redux/actions';
-import { isHost } from '../../utils/scattergories';
 import { GAME_STATUS } from '../../constants/gameFlow';
+import { isHost } from '../../utils/scattergories';
 
 import './ScatterGameView.css';
 class ScatterGameView extends React.Component {
@@ -24,6 +24,7 @@ class ScatterGameView extends React.Component {
   }
 
   componentDidMount() {
+    // TODO: maybe move all of these into a wrapper component (like GameSocketWrapper?)
     this.props.ws.on('emit-change-letter', (data) => {
       let { letter } = data;
       this.props.setLetter(letter);
@@ -35,7 +36,8 @@ class ScatterGameView extends React.Component {
       //TODO: start timer countdown
     });
     this.props.ws.on('emit-end-round', (data) => {
-      // TODO:
+      // TODO: Send answers, disable inputs
+      console.log('round ended');
     });
   }
 
@@ -53,7 +55,6 @@ class ScatterGameView extends React.Component {
         (event.key === 'Enter' || event.key === 'Tab') &&
         this.props.selectedPrompt !== -1
       ) {
-        console.log('shiftkeypress?', event.shiftKey);
         let move = event.shiftKey ? -1 : 1;
         let out = event.shiftKey
           ? this.props.selectedPrompt === 0
@@ -69,14 +70,17 @@ class ScatterGameView extends React.Component {
 
   render() {
     let hosting = isHost(this.props.lobby, this.props.ws);
+    let roundStarted =
+      this.props.gameFlow.gameStatus === GAME_STATUS.ROUND_STARTED;
     return (
       <div id="scatter-game-view">
         <div id="scatter-game-left">
           <LetterView
             isHost={hosting}
+            roundStarted={roundStarted}
             letter={this.props.gameFlow.currentLetter}
           />
-          <TimerView timeLeft={120} />
+          <TimerView roundStarted={roundStarted} timeLeft={120} />
         </div>
         <div id="scatter-game-right">
           <ScattergoriesView

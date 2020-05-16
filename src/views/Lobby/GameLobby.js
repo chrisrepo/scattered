@@ -22,10 +22,11 @@ class GameLobby extends React.Component {
     this.props.ws.off('emit-start-game');
   }
   render() {
+    const started = this.props.lobby.roomData[this.props.lobby.roomId].started;
     const hosting = isHost(this.props.lobby, this.props.ws);
     return (
       <div id="game-lobby-container">
-        {!hosting && (
+        {!hosting && started && (
           <div
             onClick={() =>
               this.props.ws.emit('host-start-game', {

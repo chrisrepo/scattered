@@ -5,6 +5,7 @@ const LETTERS = require('../src/constants/letters');
 let guessTimeout;
 function startRoundTimer(io, lobby, game, roomId) {
   io.in(roomId).emit('emit-start-round', game);
+  console.log('starting round timer : ', +game.timePerRound + ' seconds');
   guessTimeout = setTimeout(() => {
     endRound(io, lobby, roomId);
   }, game.timePerRound * 1000);
@@ -13,7 +14,7 @@ function startRoundTimer(io, lobby, game, roomId) {
 function endRound(io, lobby, game, roomId) {
   clearTimeout(guessTimeout);
   game.gameStatus = GAME_STATUS.SCORING;
-  io.in(roomId).emit('emit-end-round');
+  io.in(roomId).emit('emit-end-round', { gameStatus: game.gameStatus });
 }
 
 function buildUserAnswers(answers, socketId, userList) {
@@ -32,7 +33,9 @@ module.exports = function (io, socket, roomList, userList, gameList) {
   socket.on('host-start-game', (data) => {
     // host started game, send start to everyone (including host)
     let { roomId } = data;
+    console.log('host start game... has started?', roomList[roomId].started);
     if (roomList[roomId].started) {
+      console.log('game list ', gameList);
       // Only talk to this socket since they are joining in progress
       //TODO: get current game data to update user
       const roundNum = gameList[roomId].round;
@@ -57,14 +60,17 @@ module.exports = function (io, socket, roomList, userList, gameList) {
 
   socket.on('host-start-round', (data) => {
     let { roomId } = data;
+    console.log('host start round', roomId);
     if (gameList[roomId].gameStatus !== GAME_STATUS.ROUND_STARTED) {
       // increment round # in game
       gameList[roomId].gameStatus = GAME_STATUS.ROUND_STARTED;
       gameList[roomId].round += 1; // Round starts at 0 when game started
       gameList[roomId].playerCount = Object.keys(roomList[roomId].users).length; // Set player count to look for when turning in answers
+      gameList[roomId].answers[gameList[roomId].round - 1] = {}; // Maps socket id to answers
       // Round # will correspond to answers[] where round - 1  = the index for that round
 
       // Start timer and game loop
+      console.log('starting timer');
       startRoundTimer(io, roomList, gameList[roomId], roomId);
     }
   });
@@ -98,10 +104,11 @@ module.exports = function (io, socket, roomList, userList, gameList) {
       socket.id,
       userList
     );
+    console.log(gameList[roomId].answers[roundInd]);
     const len1 = Object.keys(gameList[roomId].answers[roundInd]).length;
     if (len1 === gameList[roomId].playerCount) {
       // Start scoring once all player clients have submitted their scores
-      io.in(roomId).emit('emit-being-scoring', { gameData: gameList[roomId] });
+      io.in(roomId).emit('emit-begin-scoring', { gameData: gameList[roomId] });
     }
   });
 
