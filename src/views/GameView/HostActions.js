@@ -5,7 +5,6 @@ import './HostActions.css';
 const HostActions = ({ ws, roomId, flow }) => {
   // TODO: Maybe put actions somewhere else
   const changeLetter = () => {
-    console.log('change letter clicked', roomId, flow.currentLetter);
     ws.emit('host-change-letter', { roomId, curLetter: flow.currentLetter });
   };
   const changeLetterAction = (

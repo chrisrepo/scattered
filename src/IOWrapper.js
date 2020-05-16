@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import io from 'socket.io-client';
+import { withRouter } from 'react-router-dom';
+
 import {
   setWebsocketConnection,
   setRoomData,
@@ -8,6 +10,7 @@ import {
   setUsername,
 } from './redux/actions';
 import { getRoomIdFromPathName } from './utils/history';
+
 class IOWrapper extends React.Component {
   constructor(props) {
     super(props);
@@ -20,31 +23,23 @@ class IOWrapper extends React.Component {
       this.onWebsocketConnect(ws);
       const pathname = window.location.pathname;
       // Reconnection/Connection logic
-      console.log('on connect', pathname);
-      this.handleLobbyConnection();
+      console.log('on connect', pathname, ws);
+      if (pathname !== '/') {
+        this.handleInitialConnection(ws);
+      }
+    });
+
+    ws.on('log-in-success', () => {
+      const pathname = window.location.pathname;
+      if (pathname !== '/') {
+        console.log('log-in-success');
+        this.joinInitialRoom();
+      }
     });
 
     ws.on('update-room', (data) => {
       console.log('update -room', data.roomData);
       this.props.setRoomData(data.roomData);
-    });
-
-    ws.on('emit-join-lobby', (data) => {
-      this.props.setRoom(data.roomId);
-      this.props.setRoomData(data.roomData);
-      const pathname = window.location.pathname;
-      const newRoom = getRoomIdFromPathName(pathname);
-      if (!newRoom) {
-        return;
-      }
-      console.log('new room: ', newRoom, ' from', pathname);
-      if (newRoom !== 'Lobby') {
-        this.props.ws.emit('switch-room', {
-          roomId: newRoom,
-          oldId: 'Lobby',
-        });
-        this.props.setRoom(newRoom);
-      }
     });
   }
 
@@ -52,8 +47,18 @@ class IOWrapper extends React.Component {
     window.onpopstate = this.onBackButtonEvent;
   }
 
+  joinInitialRoom = () => {
+    let joining = getRoomIdFromPathName(window.location.pathname);
+    if (joining) {
+      this.props.ws.emit('switch-room', {
+        roomId: joining,
+      });
+      this.props.setRoom(joining);
+    }
+  };
+
   // Page reload logic
-  handleLobbyConnection = () => {
+  handleInitialConnection = (ws) => {
     // Reroute if username empty
     let username = sessionStorage.getItem('sc-user');
     if (!this.props.user.username && username) {
@@ -66,8 +71,8 @@ class IOWrapper extends React.Component {
     const body = {
       username,
     };
-    console.log('emit join lobby IOWrap', body);
-    this.props.ws.emit('join-lobby', body);
+    console.log('emit login IOWrap', body, this.props.ws);
+    this.props.ws.emit('log-in', body);
   };
 
   onBackButtonEvent = (event) => {
@@ -86,20 +91,13 @@ class IOWrapper extends React.Component {
   onWebsocketConnect(ws) {
     // Put websocket in redux store for use throughout application
     this.props.setWebsocketConnection(ws);
-    this.setState({
-      isConnecting: false,
-    });
   }
 
   render() {
     let style = {
-      height: 'inherit',
-      width: 'inherit',
+      display: 'none',
     };
-    if (this.state.isConnecting) {
-      return <div>LOADING...</div>;
-    }
-    return <div style={style}>{this.props.children}</div>;
+    return <div style={style}></div>;
   }
 }
 
@@ -107,11 +105,10 @@ const mapStateToProps = (state) => ({
   ws: state.connection,
   curRoomId: state.lobby.roomId,
   user: state.user,
-  lobby: state.lobby,
 });
 export default connect(mapStateToProps, {
   setWebsocketConnection,
   setRoom,
   setRoomData,
   setUsername,
-})(IOWrapper);
+})(withRouter(IOWrapper));

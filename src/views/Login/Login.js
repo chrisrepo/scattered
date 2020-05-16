@@ -21,13 +21,15 @@ class Login extends React.Component {
     const username = this.inputRef.current.value;
 
     if (username.length > 0) {
+      // Store username in redux & session storage (so refreshes mean we can relog in the user)
       this.props.setUsername(username);
       sessionStorage.setItem('sc-user', username);
       this.props.history.push('/lobby');
       const body = {
         username,
       };
-      this.props.ws.emit('join-lobby', body);
+      // Log in (and save user on backend)
+      this.props.ws.emit('log-in', body);
     }
   };
 

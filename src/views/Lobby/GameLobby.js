@@ -17,9 +17,6 @@ class GameLobby extends React.Component {
     this.props.ws.off('emit-start-game');
   }
   render() {
-    if (!this.props.ws || this.props.lobby.roomId === 'Lobby') {
-      return <div>LOADING</div>;
-    }
     const hosting = isHost(this.props.lobby, this.props.ws);
     return (
       <div id="game-lobby-container">

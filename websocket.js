@@ -3,7 +3,6 @@ const http = require('http');
 const socketIo = require('socket.io');
 const path = require('path');
 
-const utils = require('./websocket/util.js');
 const { GAME_STATUS } = require('./websocket/constants');
 const port = process.env.PORT || 3001;
 
@@ -73,16 +72,21 @@ var gameList = {
 var userList = {};
 //Setting up a socket with the namespace "connection" for new sockets
 io.on('connection', (socket) => {
+  socket.on('log-in', (data) => {
+    let { username } = data;
+    console.log('user login: ', data, socket.id);
+    userList[socket.id] = {
+      id: socket.id,
+      username,
+    };
+    io.to(socket.id).emit('log-in-success');
+  });
+
   socket.on('join-lobby', (data) => {
     socket.join('Lobby');
     let { username } = data;
     // Add user to lobby
     roomList.Lobby.users[socket.id] = { id: socket.id, username };
-    // Create user entry in main container
-    userList[socket.id] = {
-      id: socket.id,
-      username,
-    };
     let roomId = 'Lobby';
     io.in(roomId).emit('emit-join-lobby', {
       roomId,
@@ -98,8 +102,12 @@ io.on('connection', (socket) => {
     delete userList[socket.id];
     // Loop thru rooms deleting socket id
     Object.keys(roomList).forEach((key) => {
-      delete roomList[key].users[socket.id];
+      if (roomList[key].users[socket.id]) {
+        delete roomList[key].users[socket.id];
+        io.in(key).emit('update-room', { roomData: roomList });
+      }
     });
+    io.in('Lobby').emit('update-room', { roomData: roomList });
   });
 
   // Chat Logic
@@ -113,31 +121,4 @@ io.on('connection', (socket) => {
     gameList
   );
 });
-/*
-function setupAuthoritativePhaser() {
-  JSDOM.fromFile(path.join(__dirname, 'gameServers/pongServer/index.html'), {
-    runScripts: 'dangerously', // To run the scripts in the html file
-    resources: 'usable', // Also load supported external resources
-    pretendToBeVisual: true, // So requestAnimatinFrame events fire
-  })
-    .then((dom) => {
-      dom.window.URL.createObjectURL = (blob) => {
-        if (blob) {
-          return datauri.format(
-            blob.type,
-            blob[Object.getOwnPropertySymbols(blob)[0]]._buffer
-          ).content;
-        }
-      };
-      dom.window.URL.revokeObjectURL = (objectURL) => {};
-      dom.window.gameLoaded = () => {
-        console.log('Serverside Pong Game Loaded');
-      };
-      dom.window.io = io;
-    })
-    .catch((error) => {
-      console.log(error.message);
-    });
-}*/
-//setupAuthoritativePhaser(); Dont do pong stuff rn
 server.listen(port, () => console.log(`Listening on port ${port}`));

@@ -9,9 +9,6 @@ class HostOptions extends React.Component {
   };
 
   render() {
-    if (!this.props.ws || this.props.lobby.roomId === 'Lobby') {
-      return <div>LOADING</div>;
-    }
     return (
       <div id="game-room-container">
         <h2>Game Options</h2>

@@ -22,7 +22,6 @@ class ScatterGameView extends React.Component {
   componentDidMount() {
     this.props.setPrompts(getPrompts(10));
     this.props.ws.on('emit-change-letter', (data) => {
-      console.log('emit change letter', data);
       let { letter } = data;
       this.props.setLetter(letter);
     });
