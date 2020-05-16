@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useSpring, animated } from 'react-spring';
 import { connect } from 'react-redux';
 
-import { setAnswer } from '../../redux/actions';
+import { setAnswer } from '../../../redux/actions';
 
 const PromptInput = ({ placeholder, isSelected, index, setAnswer }) => {
   const promptInput = useRef(null);

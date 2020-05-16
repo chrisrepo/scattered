@@ -9,6 +9,13 @@
   height: 50px;
   white-space: nowrap;
   transition: height 1s, width 1s, margin 1s, padding 1s;
+  position: relative;
+}
+
+.prompt-hider {
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }
 
 .prompt-container .prompt-text {
