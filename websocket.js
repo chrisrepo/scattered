@@ -4,7 +4,7 @@ const socketIo = require('socket.io');
 const path = require('path');
 
 const utils = require('./websocket/util.js');
-const { GAME_STATUS } = require('./websocket/constants');
+const { GAME_STATUS, GAME_CONFIG } = require('./websocket/constants');
 const port = process.env.PORT || 3001;
 
 //Setting up express and adding socketIo middleware
@@ -42,8 +42,9 @@ var roomList = {
 };
 // Second tracking var just for games
 var gameList = {
+  // TODO: this is redundant code for each room, make a function..
   Charmander: {
-    timePerRound: 120, // TODO: maybe create config for defaults (this & prompt count/ round count)
+    timePerRound: GAME_CONFIG.timePerRound,
     round: 0,
     gameStatus: GAME_STATUS.PRE_ROUND,
     answers: [], // array of answers (indexed by question number)
@@ -52,21 +53,21 @@ var gameList = {
     prompts: [],
   },
   Squirtle: {
-    timePerRound: 120,
+    timePerRound: GAME_CONFIG.timePerRound,
     round: 0,
     gameStatus: GAME_STATUS.PRE_ROUND,
     answers: [],
     prompts: [],
   },
   Bulbasaur: {
-    timePerRound: 120,
+    timePerRound: GAME_CONFIG.timePerRound,
     round: 0,
     gameStatus: GAME_STATUS.PRE_ROUND,
     answers: [],
     prompts: [],
   },
   Pikachu: {
-    timePerRound: 120,
+    timePerRound: GAME_CONFIG.timePerRound,
     round: 0,
     gameStatus: GAME_STATUS.PRE_ROUND,
     answers: [],

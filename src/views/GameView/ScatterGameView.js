@@ -10,8 +10,9 @@ import {
   setLetter,
   setSelectedPrompt,
   setGameStatus,
+  setAnswers,
 } from '../../redux/actions';
-import { GAME_STATUS } from '../../constants/gameFlow';
+import { GAME_STATUS, GAME_CONFIG } from '../../constants/gameFlow';
 import { isHost } from '../../utils/scattergories';
 
 import './ScatterGameView.css';
@@ -37,7 +38,18 @@ class ScatterGameView extends React.Component {
     });
     this.props.ws.on('emit-end-round', (data) => {
       // TODO: Send answers, disable inputs
-      console.log('round ended');
+      const body = {
+        roomId: this.props.lobby.roomId,
+        answers: this.props.answers,
+      };
+      console.log('round ended, sending answers', body);
+      this.props.ws.emit('user-turn-in-answers', body);
+    });
+    this.props.ws.on('emit-begin-scoring', (data) => {
+      let { gameData } = data;
+      console.log('begin scoring: ', gameData.answers);
+      this.props.setGameStatus(GAME_STATUS.SCORING);
+      this.props.setAnswers(gameData.answers);
     });
   }
 
@@ -80,7 +92,10 @@ class ScatterGameView extends React.Component {
             roundStarted={roundStarted}
             letter={this.props.gameFlow.currentLetter}
           />
-          <TimerView roundStarted={roundStarted} timeLeft={120} />
+          <TimerView
+            roundStarted={roundStarted}
+            timeLeft={GAME_CONFIG.timePerRound}
+          />
         </div>
         <div id="scatter-game-right">
           <ScattergoriesView
@@ -98,6 +113,7 @@ class ScatterGameView extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
+    answers: state.game.answers,
     prompts: state.game.prompts,
     selectedPrompt: state.game.selectedPrompt,
     user: state.user,
@@ -112,4 +128,5 @@ export default connect(mapStateToProps, {
   setSelectedPrompt,
   setLetter,
   setGameStatus,
+  setAnswers,
 })(ScatterGameView);

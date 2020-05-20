@@ -1,12 +1,22 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
-const ScoringPrompt = () => {
+const ScoringPrompt = ({ prompts, promptInd }) => {
+  let promptIndDisplay = promptInd + 1;
+  let prompt = prompts[promptInd];
   return (
     <div id="scoring-prompt-container">
-      <div id="scoring-prompt-header">Prompt #2</div>{' '}
-      <div id="scoring-prompt">This rounds scoring prompt here</div>
+      <div id="scoring-prompt-header">Prompt #{promptIndDisplay}</div>{' '}
+      <div id="scoring-prompt">{prompt}</div>
     </div>
   );
 };
 
-export default ScoringPrompt;
+const mapStateToProps = (state) => {
+  return {
+    prompts: state.game.prompts,
+    promptInd: state.gameFlow.currentPrompt,
+  };
+};
+
+export default connect(mapStateToProps, {})(ScoringPrompt);

@@ -5,6 +5,7 @@ const actionPrefix = 'GAME_FLOW/';
 export const GAME_ACTIONS = {
   SET_LETTER: `${actionPrefix}SET_LETTER`,
   SET_STATUS: `${actionPrefix}SET_STATUS`,
+  SET_ANSWERS: `${actionPrefix}SET_ANSWERS`,
 };
 
 // Action Functions
@@ -17,4 +18,9 @@ export const setLetter = (letter) => ({
 export const setGameStatus = (status) => ({
   type: GAME_ACTIONS.SET_STATUS,
   payload: status,
+});
+
+export const setAnswers = (answers) => ({
+  type: GAME_ACTIONS.SET_ANSWERS,
+  payload: answers,
 });

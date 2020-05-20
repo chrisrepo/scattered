@@ -12,6 +12,11 @@ export const flowReducer = (state = INITIAL_REDUCER_STATE, action) => {
         gameStatus: action.payload,
       });
     }
+    case GAME_ACTIONS.SET_ANSWERS: {
+      return Object.assign({}, state, {
+        answers: action.payload,
+      });
+    }
     default: {
       return state;
     }

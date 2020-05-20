@@ -1,16 +1,41 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
+import LoadingSpinner from '../../../LoadingSpinner';
 import ScoringAnswer from './ScoringAnswer';
 import './ScoringAnswerList.css';
-const ScoringAnswerList = () => {
+const ScoringAnswerList = ({ gameFlow }) => {
+  let { answers, currentPrompt, round } = gameFlow;
+  // TODO: may need to -1 to round later on depending on flow
+  let roundAnswers = answers[round];
+  if (!roundAnswers) {
+    return <LoadingSpinner loading size={100} />;
+  }
+  let roundKeys = Object.keys(roundAnswers);
   return (
     <div id="scoring-answer-list">
-      <ScoringAnswer text="test text 1" getsPoint user="jabba the mutt" />
-      <ScoringAnswer text="two text 2" user="boba foot" />
-      <ScoringAnswer text="asdfsad" user="lando calzone" />
-      <ScoringAnswer text="fesadfsda" getsPoint user="darth fader" />
+      {roundAnswers &&
+        roundKeys.map((userKey) => {
+          let userAnswerList = roundAnswers[userKey];
+          let answer = userAnswerList[currentPrompt];
+          return (
+            <ScoringAnswer
+              key={userKey}
+              text={answer.text}
+              getsPoint={answer.earnedPoint}
+              user={answer.username}
+            />
+          );
+        })}
     </div>
   );
 };
 
-export default ScoringAnswerList;
+const mapStateToProps = (state) => {
+  return {
+    prompts: state.game.prompts,
+    gameFlow: state.gameFlow,
+  };
+};
+
+export default connect(mapStateToProps, {})(ScoringAnswerList);

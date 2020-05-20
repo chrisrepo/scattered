@@ -4,4 +4,8 @@ const GAME_STATUS = {
   SCORING: 'SCORING', // Time after round ends & host is scoring users. Moves from here back to pre round where prompts are covered
 };
 
-module.exports = { GAME_STATUS };
+const GAME_CONFIG = {
+  timePerRound: 30,
+};
+
+module.exports = { GAME_STATUS, GAME_CONFIG };

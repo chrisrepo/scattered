@@ -1,5 +1,5 @@
 const PROMPTS = require('../src/constants/categories');
-const { GAME_STATUS } = require('./constants');
+const { GAME_STATUS, GAME_CONFIG } = require('./constants');
 
 function getLetter(letterList, curLetter) {
   let randInd = Math.floor(Math.random() * Math.floor(letterList.length));
@@ -32,7 +32,7 @@ function getPrompts(numOfPrompts) {
 
 function resetGame(gameList, roomId) {
   gameList[roomId] = {
-    timePerRound: 120,
+    timePerRound: GAME_CONFIG.timePerRound,
     round: 0,
     gameStatus: GAME_STATUS.PRE_ROUND,
     answers: [],
