@@ -4,7 +4,7 @@ const socketIo = require('socket.io');
 const path = require('path');
 
 const utils = require('./websocket/util.js');
-const { GAME_STATUS, GAME_CONFIG } = require('./websocket/constants');
+const { GAME_STATUS, GAME_CONFIG } = require('./src/constants/gameFlow');
 const port = process.env.PORT || 3001;
 
 //Setting up express and adding socketIo middleware

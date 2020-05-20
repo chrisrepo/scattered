@@ -1,6 +1,6 @@
-const { GAME_STATUS } = require('./constants');
-const { getLetter, getPrompts, resetGame } = require('./gameUtil');
+const { GAME_STATUS } = require('../src/constants/gameFlow');
 const LETTERS = require('../src/constants/letters');
+const { getLetter, getPrompts, resetGame } = require('./gameUtil');
 
 let guessTimeout;
 function startRoundTimer(io, lobby, game, roomId) {
@@ -108,6 +108,7 @@ module.exports = function (io, socket, roomList, userList, gameList) {
     const len1 = Object.keys(gameList[roomId].answers[roundInd]).length;
     if (len1 === gameList[roomId].playerCount) {
       // Start scoring once all player clients have submitted their scores
+      // TODO: Do i need to send prompts?
       io.in(roomId).emit('emit-begin-scoring', { gameData: gameList[roomId] });
     }
   });
