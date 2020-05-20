@@ -91,6 +91,20 @@ module.exports = function (io, socket, roomList, userList, gameList) {
     io.in(roomId).emit('emit-end-scoring');
   });
 
+  socket.on('host-switch-prompt', (data) => {
+    let { roomId, promptInd } = data;
+    io.in(roomId).emit('emit-switch-prompt', { promptInd });
+  });
+
+  socket.on('host-change-answer-score', (data) => {
+    let { roomId, promptInd, userId, earnedPoint } = data;
+    io.in(roomId).emit('emit-change-answer-score', {
+      promptInd,
+      userId,
+      earnedPoint,
+    });
+  });
+
   socket.on('host-change-letter', (data) => {
     let { roomId, curLetter } = data;
     const newLetter = getLetter(LETTERS, curLetter);

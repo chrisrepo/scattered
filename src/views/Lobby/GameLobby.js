@@ -24,6 +24,7 @@ class GameLobby extends React.Component {
   render() {
     const started = this.props.lobby.roomData[this.props.lobby.roomId].started;
     const hosting = isHost(this.props.lobby, this.props.ws);
+    // TODO: Make join-in-progress button actually look like a button..
     return (
       <div id="game-lobby-container">
         {!hosting && started && (

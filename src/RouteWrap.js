@@ -1,21 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import LoadingSpinner from './LoadingSpinner';
-const RouteWrap = ({ children, ws }) => {
+const RouteWrap = ({ children, ws, lobby, checkLoggedIn }) => {
   const [isLoading, setLoading] = useState(true);
   useEffect(() => {
     const to = setTimeout(() => {
       setLoading(false);
-    }, 2000);
+    }, 1000);
 
     return () => {
       clearTimeout(to);
     };
   }, []);
-  /*if (ws === null || isLoading) {
-    return <LoadingSpinner size={100} />; // TODO: Better load screen
-  }*/
-  let showLoad = ws === null || isLoading;
+  let showLoad =
+    ws === null || isLoading || (checkLoggedIn && !roomHasUser(ws, lobby));
   return (
     <React.Fragment>
       <LoadingSpinner loading={showLoad} size={100} />
@@ -24,7 +22,19 @@ const RouteWrap = ({ children, ws }) => {
   );
 };
 
+const roomHasUser = (ws, lobby) => {
+  if (lobby.roomId !== undefined && lobby.roomData !== undefined) {
+    let users = lobby.roomData[lobby.roomId].users;
+    console.log(users, lobby.roomData[lobby.roomId]);
+    if (users && users[ws.id] !== undefined) {
+      return true;
+    }
+  }
+  return false;
+};
+
 const mapStateToProps = (state) => ({
   ws: state.connection,
+  lobby: state.lobby,
 });
 export default connect(mapStateToProps, {})(RouteWrap);

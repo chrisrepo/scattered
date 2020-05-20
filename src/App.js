@@ -23,12 +23,12 @@ class App extends React.Component {
             </RouteWrap>
           </Route>
           <Route path="/lobby" exact>
-            <RouteWrap>
+            <RouteWrap checkLoggedIn>
               <LobbyView />
             </RouteWrap>
           </Route>
           <Route path="/lobby/:roomId" exact>
-            <RouteWrap>
+            <RouteWrap checkLoggedIn>
               <GameLobby />
             </RouteWrap>
           </Route>

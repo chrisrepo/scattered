@@ -1,20 +1,23 @@
 import React from 'react';
-import { FaSpinner } from 'react-icons/fa';
 import { FiLoader } from 'react-icons/fi';
 
 import './LoadingSpinner.css';
-const LoadingSpinner = ({ loading, size }) => {
+
+interface AppProps {
+  loading: Boolean;
+  size: Number;
+}
+const LoadingSpinner = ({ loading, size }: AppProps) => {
+  if (!loading) {
+    return null;
+  }
   const style = {
     fontSize: size,
-  };
+  } as React.CSSProperties;
 
   const containerStyle = {
     opacity: loading ? 1 : 0,
   };
-  // since positioning is absolute, we can only set 'display' when we want to hide it
-  if (!loading) {
-    containerStyle.display = 'none';
-  }
   return (
     <div style={containerStyle} className="spinner-container">
       <FiLoader style={style} className="load-spinner" />

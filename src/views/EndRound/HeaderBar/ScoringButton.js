@@ -1,9 +1,9 @@
 import React from 'react';
 
 import './ScoringButton.css';
-const ScoringButton = ({ text }) => {
+const ScoringButton = ({ text, clickHandler }) => {
   return (
-    <div className="scoring-button-container">
+    <div onClick={clickHandler} className="scoring-button-container">
       <div className="scoring-button">{text}</div>
     </div>
   );

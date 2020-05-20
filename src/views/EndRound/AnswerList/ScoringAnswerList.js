@@ -18,9 +18,16 @@ const ScoringAnswerList = ({ gameFlow }) => {
         roundKeys.map((userKey) => {
           let userAnswerList = roundAnswers[userKey];
           let answer = userAnswerList[currentPrompt];
+          console.log(
+            'current prompt: ',
+            currentPrompt,
+            userAnswerList,
+            answer
+          );
           return (
             <ScoringAnswer
               key={userKey}
+              userId={userKey}
               text={answer.text}
               getsPoint={answer.earnedPoint}
               user={answer.username}
