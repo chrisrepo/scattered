@@ -5,25 +5,18 @@ import LoadingSpinner from '../../../LoadingSpinner';
 import ScoringAnswer from './ScoringAnswer';
 import './ScoringAnswerList.css';
 const ScoringAnswerList = ({ gameFlow }) => {
-  let { answers, currentPrompt, round } = gameFlow;
+  let { answers, currentPrompt } = gameFlow;
   // TODO: may need to -1 to round later on depending on flow
-  let roundAnswers = answers[round];
-  if (!roundAnswers) {
+  if (!answers) {
     return <LoadingSpinner loading size={100} />;
   }
-  let roundKeys = Object.keys(roundAnswers);
+  let roundKeys = Object.keys(answers);
   return (
     <div id="scoring-answer-list">
-      {roundAnswers &&
+      {answers &&
         roundKeys.map((userKey) => {
-          let userAnswerList = roundAnswers[userKey];
+          let userAnswerList = answers[userKey];
           let answer = userAnswerList[currentPrompt];
-          console.log(
-            'current prompt: ',
-            currentPrompt,
-            userAnswerList,
-            answer
-          );
           return (
             <ScoringAnswer
               key={userKey}

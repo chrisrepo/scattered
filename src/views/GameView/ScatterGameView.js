@@ -11,6 +11,7 @@ import {
   setSelectedPrompt,
   setGameStatus,
   setAnswers,
+  setJoinedInProgress,
 } from '../../redux/actions';
 import { GAME_STATUS, GAME_CONFIG } from '../../constants/gameFlow';
 import { isHost } from '../../utils/scattergories';
@@ -50,7 +51,18 @@ class ScatterGameView extends React.Component {
       console.log('begin scoring: ', gameData.answers);
       this.props.setGameStatus(GAME_STATUS.SCORING);
       this.props.setAnswers(gameData.answers);
+      // Now that the round is being scored, we can set joined in progress to false
+      //  this will allow users who joined late to be able to play next round
+      if (this.props.gameFlow.joinedInProgress) {
+        this.props.setJoinedInProgress(false);
+      }
     });
+  }
+
+  componentWillUnmount() {
+    this.props.ws.off('emit-begin-scoring');
+    this.props.ws.off('emit-start-round');
+    this.props.ws.off('emit-end-round');
   }
 
   onSelect = (ind) => {
@@ -129,4 +141,5 @@ export default connect(mapStateToProps, {
   setLetter,
   setGameStatus,
   setAnswers,
+  setJoinedInProgress,
 })(ScatterGameView);

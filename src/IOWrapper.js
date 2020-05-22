@@ -8,8 +8,18 @@ import {
   setRoomData,
   setRoom,
   setUsername,
+  setPrompts,
+  setLetter,
+  setGameStatus,
+  setRound,
+  setJoinedInProgress,
+  setAnswers,
 } from './redux/actions';
-import { getRoomIdFromPathName, isGame } from './utils/history';
+import {
+  getRoomIdFromPathName,
+  getPathType,
+  PATH_TYPES,
+} from './utils/history';
 
 class IOWrapper extends React.Component {
   constructor(props) {
@@ -20,18 +30,60 @@ class IOWrapper extends React.Component {
     const ws = io();
     ws.on('connect', () => {
       this.onWebsocketConnect(ws);
-      const pathname = window.location.pathname;
       // Reconnection/Connection logic
+      const pathname = window.location.pathname;
+      // Only need reconnection logic when not at sign in screen
       if (pathname !== '/') {
-        this.handleInitialConnection(ws);
+        this.handleInitialConnection(ws, pathname);
       }
     });
 
     ws.on('log-in-success', () => {
-      const pathname = window.location.pathname;
-      if (pathname !== '/') {
-        this.joinInitialRoom();
+      this.joinInitialRoom();
+    });
+
+    ws.on('rejoin-success', (data) => {
+      const { roomId } = data;
+      let type = getPathType(window.location.pathname);
+      // Currently we don't have anything, but it's possible we'll need to set some initial state data that the websocket returns
+      switch (type) {
+        case PATH_TYPES.LOBBY: {
+          // Handle lobby specific data
+          break;
+        }
+        case PATH_TYPES.GAME: {
+          // Handle game specific data
+          console.log('need to fetch game data on rejoin');
+          ws.emit('join-game', { roomId });
+          break;
+        }
+        default: {
+        }
       }
+      // Handle anything that happens regardless of path type
+      this.props.setRoom(roomId);
+    });
+
+    ws.on('join-game-success', (data) => {
+      let { letter, prompts, roundNum, status, inProgress, answers } = data;
+      this.props.setLetter(letter);
+      this.props.setPrompts(prompts);
+      this.props.setRound(roundNum);
+      this.props.setGameStatus(status);
+      this.props.setJoinedInProgress(inProgress);
+      this.props.setAnswers(answers);
+    });
+
+    // Could not rejoin game
+    ws.on('join-game-failure', (data) => {
+      let { roomId } = data;
+      console.log(
+        'failed to join game in room ',
+        roomId,
+        ' - rerouting to lobby'
+      );
+      this.joinInitialRoom(roomId);
+      //TODO: maybe show error saying cannot join game
     });
 
     ws.on('update-room', (data) => {
@@ -39,41 +91,36 @@ class IOWrapper extends React.Component {
     });
   }
 
-  componentDidMount() {
-    window.onpopstate = this.onBackButtonEvent;
-  }
-
-  joinInitialRoom = () => {
-    let joining = getRoomIdFromPathName(window.location.pathname);
-    if (joining) {
-      let joiningGameRoom = isGame(window.location.pathname);
-      this.props.ws.emit('switch-room', {
-        roomId: joining,
-      });
-      this.props.setRoom(joining);
-      // If they're joining a game room, send them back to game lobby (so they can rejoin the game)
-      //    easier than saving data right here saying we are reconnecting to game, then on next update-room (which has all initial room data), actually doing the work
-      if (joiningGameRoom) {
-        this.props.history.push(`/lobby/${joining}`);
-      }
-    }
-  };
-
   // Page reload logic
-  handleInitialConnection = (ws) => {
-    // Reroute if username empty
+  handleInitialConnection = (ws, path) => {
+    // Before trying to reconnect, make sure there was a username saved in session
     let username = sessionStorage.getItem('sc-user');
     if (!this.props.user.username && username) {
       this.props.setUsername(username);
     }
+    // Reroute if username empty
     if (!username && !this.props.user.username) {
       this.props.history.push('/');
     }
-    username = username ? username : this.props.username;
+
     const body = {
       username,
+      rejoin: getRoomIdFromPathName(path),
     };
     this.props.ws.emit('log-in', body);
+  };
+
+  componentDidMount() {
+    window.onpopstate = this.onBackButtonEvent;
+  }
+
+  joinInitialRoom = (oldId = undefined) => {
+    this.props.ws.emit('switch-room', {
+      roomId: 'Lobby',
+      oldId,
+    });
+    this.props.setRoom('Lobby');
+    this.props.history.push('/lobby');
   };
 
   onBackButtonEvent = (event) => {
@@ -112,4 +159,10 @@ export default connect(mapStateToProps, {
   setRoom,
   setRoomData,
   setUsername,
+  setLetter,
+  setPrompts,
+  setGameStatus,
+  setRound,
+  setJoinedInProgress,
+  setAnswers,
 })(withRouter(IOWrapper));

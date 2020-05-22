@@ -16,7 +16,10 @@ class Chat extends React.Component {
     this.props.ws.on('emit-chat', (data) => {
       this.addChatMessage(data.username, data.message);
     });
-    this.addChatMessage(undefined, 'You have joined the lobby chat');
+    this.addChatMessage(
+      undefined,
+      `You have joined the ${this.props.lobby.roomId} chat`
+    );
   }
 
   componentWillUnmount() {

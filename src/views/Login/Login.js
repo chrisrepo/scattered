@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
-import { setUsername } from '../../redux/actions';
+import { setUsername, clearLobbyData } from '../../redux/actions';
 
 import './Login.css';
 class Login extends React.Component {
@@ -12,6 +12,9 @@ class Login extends React.Component {
     this.state = {
       connecting: false,
     };
+  }
+  componentDidMount() {
+    this.props.clearLobbyData();
   }
 
   playButtonClicked = () => {
@@ -24,11 +27,11 @@ class Login extends React.Component {
       // Store username in redux & session storage (so refreshes mean we can relog in the user)
       this.props.setUsername(username);
       sessionStorage.setItem('sc-user', username);
-      this.props.history.push('/lobby');
       const body = {
         username,
       };
       // Log in (and save user on backend)
+      // Maybe show loading screen here
       this.props.ws.emit('log-in', body);
     }
   };
@@ -56,4 +59,6 @@ class Login extends React.Component {
 const mapStateToProps = (state) => ({
   ws: state.connection,
 });
-export default connect(mapStateToProps, { setUsername })(withRouter(Login));
+export default connect(mapStateToProps, { setUsername, clearLobbyData })(
+  withRouter(Login)
+);

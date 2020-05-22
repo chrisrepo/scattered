@@ -15,8 +15,9 @@ function updateHost(roomList, roomId, leavingId) {
   let userKeys = Object.keys(users);
   if (userKeys.length === 0) {
     // remove host
-    roomList[roomId].started = false; // TODO: reset all game values since everyone has left room
+    roomList[roomId].started = false;
     roomList[roomId].host = null;
+    console.log('all users left room - resetting roomList data');
   } else if (userKeys.length === 1) {
     // First to join is the host
     roomList[roomId].host = userKeys[0];

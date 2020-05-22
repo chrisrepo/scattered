@@ -22,20 +22,27 @@ export const flowReducer = (state = INITIAL_REDUCER_STATE, action) => {
         currentPrompt: action.payload,
       });
     }
+    case GAME_ACTIONS.SET_ROUND: {
+      return Object.assign({}, state, {
+        round: action.payload,
+      });
+    }
+    case GAME_ACTIONS.SET_JOINED_IN_PROGRESS: {
+      return Object.assign({}, state, {
+        joinedInProgress: action.payload,
+      });
+    }
     case GAME_ACTIONS.SET_ANSWER_POINT: {
       let { promptInd, userId, earnedPoint } = action.payload;
       return {
         ...state,
         answers: {
           ...state.answers,
-          [state.round]: {
-            ...state.answers[state.round],
-            [userId]: {
-              ...state.answers[state.round][userId],
-              [promptInd]: {
-                ...state.answers[state.round][userId][promptInd],
-                earnedPoint,
-              },
+          [userId]: {
+            ...state.answers[userId],
+            [promptInd]: {
+              ...state.answers[userId][promptInd],
+              earnedPoint,
             },
           },
         },

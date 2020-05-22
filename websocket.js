@@ -4,7 +4,8 @@ const socketIo = require('socket.io');
 const path = require('path');
 
 const utils = require('./websocket/util.js');
-const { GAME_STATUS, GAME_CONFIG } = require('./src/constants/gameFlow');
+const { joinRoom, sendUpdatesToRooms } = require('./websocket/roomUtil.js');
+const { CREATE_INITIAL_GAME_CONFIG } = require('./src/constants/gameFlow');
 const port = process.env.PORT || 3001;
 
 //Setting up express and adding socketIo middleware
@@ -42,49 +43,30 @@ var roomList = {
 };
 // Second tracking var just for games
 var gameList = {
-  // TODO: this is redundant code for each room, make a function..
-  Charmander: {
-    timePerRound: GAME_CONFIG.timePerRound,
-    round: 0,
-    gameStatus: GAME_STATUS.PRE_ROUND,
-    answers: [], // array of answers (indexed by question number)
-    // each index will have a map where each key is a socket id of a playing user
-    // answer will be key= socket.id value={text: answer, username: user.username, earnedPoint: false}
-    prompts: [],
-  },
-  Squirtle: {
-    timePerRound: GAME_CONFIG.timePerRound,
-    round: 0,
-    gameStatus: GAME_STATUS.PRE_ROUND,
-    answers: [],
-    prompts: [],
-  },
-  Bulbasaur: {
-    timePerRound: GAME_CONFIG.timePerRound,
-    round: 0,
-    gameStatus: GAME_STATUS.PRE_ROUND,
-    answers: [],
-    prompts: [],
-  },
-  Pikachu: {
-    timePerRound: GAME_CONFIG.timePerRound,
-    round: 0,
-    gameStatus: GAME_STATUS.PRE_ROUND,
-    answers: [],
-    prompts: [],
-  },
+  Charmander: CREATE_INITIAL_GAME_CONFIG(),
+  Squirtle: CREATE_INITIAL_GAME_CONFIG(),
+  Bulbasaur: CREATE_INITIAL_GAME_CONFIG(),
+  Pikachu: CREATE_INITIAL_GAME_CONFIG(),
 };
 
 var userList = {};
 //Setting up a socket with the namespace "connection" for new sockets
 io.on('connection', (socket) => {
   socket.on('log-in', (data) => {
-    let { username } = data;
+    let { username, rejoin } = data;
     userList[socket.id] = {
       id: socket.id,
       username,
     };
-    io.to(socket.id).emit('log-in-success');
+    //TODO:  We may need to pass back more data depending on where the user is rejoining from
+    if (rejoin) {
+      // Rejoin room for chat.
+      joinRoom(rejoin, roomList, socket, userList);
+      sendUpdatesToRooms(io, rejoin, undefined, roomList);
+      socket.emit('rejoin-success', { roomId: rejoin });
+    } else {
+      io.to(socket.id).emit('log-in-success');
+    }
   });
 
   socket.on('join-lobby', (data) => {

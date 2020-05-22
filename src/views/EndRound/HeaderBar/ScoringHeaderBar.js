@@ -6,6 +6,7 @@ import ScoringLetter from './ScoringLetter';
 import ScoringPrompt from './ScoringPrompt';
 import { isHost } from '../../../utils/scattergories';
 import './ScoringHeaderBar.css';
+import NextRoundButton from './NextRoundButton';
 class ScoringHeaderBar extends React.Component {
   scoringButtonClicked = (isBack) => {
     let { lobby, ws, promptInd } = this.props;
@@ -17,9 +18,8 @@ class ScoringHeaderBar extends React.Component {
       });
     }
   };
-  render() {
-    let { lobby, ws } = this.props;
-    let hosting = isHost(lobby, ws);
+
+  renderScoringBar = (hosting) => {
     return (
       <div id="scoring-header-bar">
         <div id="scoring-header-left">
@@ -41,6 +41,34 @@ class ScoringHeaderBar extends React.Component {
           )}
         </div>
       </div>
+    );
+  };
+
+  nextRoundButtonClicked = () => {
+    let { lobby, ws } = this.props;
+    ws.emit('host-end-scoring', {
+      roomId: lobby.roomId,
+    });
+  };
+
+  renderNextRoundButton = () => {
+    // TODO: Implement next round logic (may want a warning if user clicks when not on last prompt)
+    return (
+      <div id="next-round-button" onClick={this.nextRoundButtonClicked}>
+        Finish Scoring and Next Round
+      </div>
+    );
+  };
+  render() {
+    let { lobby, ws, promptInd } = this.props;
+    let hosting = isHost(lobby, ws);
+    return (
+      <React.Fragment>
+        {this.renderScoringBar(hosting)}
+        {hosting && (
+          <NextRoundButton lobby={lobby} ws={ws} promptInd={promptInd} />
+        )}
+      </React.Fragment>
     );
   }
 }

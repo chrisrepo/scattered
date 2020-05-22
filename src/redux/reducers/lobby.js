@@ -8,7 +8,7 @@ const initialState = {
     Bulbasaur: {},
     Pikachu: {},
   }, // contains a map of roomId to user list
-  roomId: 'Lobby', // Name of current room
+  roomId: 'Login', // Name of current room
 };
 
 export const lobbyReducer = (state = initialState, action) => {
@@ -23,6 +23,9 @@ export const lobbyReducer = (state = initialState, action) => {
         ...state,
         roomData: action.payload,
       });
+    }
+    case LOBBY_ACTIONS.CLEAR_DATA: {
+      return initialState;
     }
     default: {
       return state;

@@ -1,0 +1,32 @@
+.next-modal-button {
+  padding: 7px 10px;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-left: 5px;
+}
+
+.modal-button-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.next-modal-button.cancel {
+  background-color: #545b62;
+  border-color: #4e555b;
+}
+.next-modal-button.cancel:hover {
+  background-color: #545b62;
+  border-color: #4e555b;
+}
+
+.next-modal-button.end {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+.next-modal-button.end:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}

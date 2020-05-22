@@ -6,14 +6,13 @@ const RouteWrap = ({ children, ws, lobby, checkLoggedIn }) => {
   useEffect(() => {
     const to = setTimeout(() => {
       setLoading(false);
-    }, 1000);
+    }, 10);
 
     return () => {
       clearTimeout(to);
     };
   }, []);
-  let showLoad =
-    ws === null || isLoading || (checkLoggedIn && !roomHasUser(ws, lobby));
+  let showLoad = ws === null || isLoading;
   return (
     <React.Fragment>
       <LoadingSpinner loading={showLoad} size={100} />
@@ -22,7 +21,7 @@ const RouteWrap = ({ children, ws, lobby, checkLoggedIn }) => {
   );
 };
 
-const roomHasUser = (ws, lobby) => {
+/* const roomHasUser = (ws, lobby) => {
   if (lobby.roomId !== undefined && lobby.roomData !== undefined) {
     let users = lobby.roomData[lobby.roomId].users;
     console.log(users, lobby.roomData[lobby.roomId]);
@@ -31,7 +30,7 @@ const roomHasUser = (ws, lobby) => {
     }
   }
   return false;
-};
+}; */
 
 const mapStateToProps = (state) => ({
   ws: state.connection,

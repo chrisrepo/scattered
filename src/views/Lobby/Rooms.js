@@ -5,10 +5,14 @@ import { withRouter } from 'react-router-dom';
 import { setRoom } from '../../redux/actions';
 import './Rooms.css';
 class Rooms extends React.Component {
-  switchRoom = (roomId) => {
+  switchRoom = (roomId, hasStarted) => {
     this.props.ws.emit('switch-room', { roomId, oldId: this.props.roomId });
     this.props.setRoom(roomId);
-    this.props.history.push(`/lobby/${roomId}`);
+    let lobbyType = hasStarted ? 'game' : 'lobby';
+    if (hasStarted) {
+      this.props.ws.emit('join-game', { roomId });
+    }
+    this.props.history.push(`/${lobbyType}/${roomId}`);
   };
 
   renderRooms() {
@@ -23,7 +27,11 @@ class Rooms extends React.Component {
       const playerCount = Object.keys(roomData).length;
       const playerText = playerCount === 1 ? ' Player' : ' Players';
       return (
-        <div key={key} className="room" onClick={() => this.switchRoom(key)}>
+        <div
+          key={key}
+          className="room"
+          onClick={() => this.switchRoom(key, this.props.rooms[key].started)}
+        >
           <div className="game-state">{hasStarted}</div>
           <h2 className="room-name">{key}</h2>
           <p className="room-players">

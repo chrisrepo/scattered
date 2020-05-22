@@ -7,6 +7,8 @@ export const GAME_ACTIONS = {
   SET_ANSWERS: `${actionPrefix}SET_ANSWERS`,
   SET_PROMPT_IND: `${actionPrefix}SET_PROMPT_IND`,
   SET_ANSWER_POINT: `${actionPrefix}SET_ANSWER_POINT`,
+  SET_ROUND: `${actionPrefix}SET_ROUND`,
+  SET_JOINED_IN_PROGRESS: `${actionPrefix}SET_JOINED_IN_PROGRESS`,
 };
 
 // Action Functions
@@ -34,4 +36,14 @@ export const setPromptInd = (ind) => ({
 export const setPointForAnswer = (data) => ({
   type: GAME_ACTIONS.SET_ANSWER_POINT,
   payload: data,
+});
+
+export const setRound = (round) => ({
+  type: GAME_ACTIONS.SET_ROUND,
+  payload: round,
+});
+
+export const setJoinedInProgress = (inProgress) => ({
+  type: GAME_ACTIONS.SET_JOINED_IN_PROGRESS,
+  payload: inProgress,
 });
