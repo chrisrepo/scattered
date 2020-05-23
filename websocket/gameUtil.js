@@ -1,4 +1,5 @@
 const PROMPTS = require('../src/constants/categories');
+const LETTERS = require('../src/constants/letters');
 const { GAME_STATUS, GAME_CONFIG } = require('./constants');
 
 function getLetter(letterList, curLetter) {
@@ -34,9 +35,58 @@ function resetGame(gameList, roomId) {
   gameList[roomId] = {
     timePerRound: GAME_CONFIG.timePerRound,
     round: 0,
+    promptInd: 0,
     gameStatus: GAME_STATUS.PRE_ROUND,
     answers: [],
     prompts: [],
   };
 }
-module.exports = { getLetter, getPrompts, resetGame };
+
+function setNewRound(game) {
+  game.gameStatus = GAME_STATUS.PRE_ROUND;
+  const letter = getLetter(LETTERS);
+  const prompts = getPrompts(10); // TODO: maybe customize # of prompts
+  game.letter = letter;
+  game.prompts = prompts;
+}
+
+// Removes the player from the game's player list
+function removePlayerFromGame(rooms, gameList, userId) {
+  rooms.forEach((key) => {
+    // Check here to avoid rooms that dont host/have games
+    if (gameList[key]) {
+      if (gameList[key].players && gameList[key].players[userId]) {
+        delete gameList[key].players[userId];
+      }
+    }
+  });
+}
+
+// Returns true if last player has turned in their answers;
+function checkAndRemovePlayerFromRound(gameList, roomId, userId) {
+  if (gameList[roomId].players[userId]) {
+    delete gameList[roomId].players[userId];
+    if (Object.keys(gameList[roomId].players).length === 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function generateScoreboard(players) {
+  let scoreboard = {};
+  for (let userId in players) {
+    scoreboard[userId] = { username: players[userId].username, score: 0 };
+  }
+  return scoreboard;
+}
+
+module.exports = {
+  getLetter,
+  getPrompts,
+  resetGame,
+  setNewRound,
+  removePlayerFromGame,
+  checkAndRemovePlayerFromRound,
+  generateScoreboard,
+};

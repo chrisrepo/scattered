@@ -17,18 +17,20 @@ const INITIAL_REDUCER_STATE = {
   currentPrompt: 0, // For going thru prompts
   answers: {}, // a map where each key is a socket id of a playing user
   // answer will be key= socket.id value={text: answer, username: user.username, earnedPoint: false}
-  points: {}, // Each key is a socket id, each value is just points (integer)
+  scoreboard: {}, // Each key is a socket id, each value is just points (integer)
 };
 
 const CREATE_INITIAL_GAME_CONFIG = () => {
   return {
     timePerRound: GAME_CONFIG.timePerRound,
     round: 0,
+    promptInd: 0,
     gameStatus: GAME_STATUS.PRE_ROUND,
     answers: [], // array of answers (indexed by question number)
     // each index will have a map where each key is a socket id of a playing user
     // answer will be key= socket.id value={text: answer, username: user.username, earnedPoint: false}
     prompts: [],
+    scoreboard: {},
   };
 };
 

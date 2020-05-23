@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import LoadingSpinner from './LoadingSpinner';
-const RouteWrap = ({ children, ws, lobby, checkLoggedIn }) => {
+const RouteWrap = ({ children, ws }) => {
+  // TODO: Maybe we shift this somewhere else
+  //    right now it's not generic, it just sits on top..
+  //    need to think of a way for individual components to leverage this where they can pass whether or not load should show.
+  //    TLDR: THIS COMPONENT SHOULD NOT CONTROL IF THE LOAD STATE SHOWS. It should accept whether to show load, or show children
   const [isLoading, setLoading] = useState(true);
   useEffect(() => {
     const to = setTimeout(() => {
@@ -20,20 +24,7 @@ const RouteWrap = ({ children, ws, lobby, checkLoggedIn }) => {
     </React.Fragment>
   );
 };
-
-/* const roomHasUser = (ws, lobby) => {
-  if (lobby.roomId !== undefined && lobby.roomData !== undefined) {
-    let users = lobby.roomData[lobby.roomId].users;
-    console.log(users, lobby.roomData[lobby.roomId]);
-    if (users && users[ws.id] !== undefined) {
-      return true;
-    }
-  }
-  return false;
-}; */
-
 const mapStateToProps = (state) => ({
   ws: state.connection,
-  lobby: state.lobby,
 });
 export default connect(mapStateToProps, {})(RouteWrap);

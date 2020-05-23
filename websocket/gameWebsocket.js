@@ -1,6 +1,13 @@
 const { GAME_STATUS } = require('../src/constants/gameFlow');
 const LETTERS = require('../src/constants/letters');
-const { getLetter, getPrompts, resetGame } = require('./gameUtil');
+const {
+  getLetter,
+  resetGame,
+  setNewRound,
+  checkAndRemovePlayerFromRound,
+  removePlayerFromGame,
+  generateScoreboard,
+} = require('./gameUtil');
 
 let guessTimeout;
 function startRoundTimer(io, lobby, game, roomId) {
@@ -34,21 +41,16 @@ module.exports = function (io, socket, roomList, userList, gameList) {
   socket.on('host-start-game', (data) => {
     // host started game, send start to everyone (including host)
     let { roomId } = data;
-    console.log('host start game... has started?', roomList[roomId].started);
     if (!roomList[roomId].started) {
       roomList[roomId].started = true;
       // This will move clients to the game view
       io.in('Lobby').emit('update-room', { roomData: roomList });
       io.in(roomId).emit('update-room', { roomData: roomList });
 
-      //TODO: get
-      const letter = getLetter(LETTERS);
-      const prompts = getPrompts(10); // TODO: maybe customize # of prompts
-      gameList[roomId].letter = letter;
-      gameList[roomId].prompts = prompts;
+      setNewRound(gameList[roomId]);
       io.in(roomId).emit('emit-start-game', {
-        letter,
-        prompts,
+        letter: gameList[roomId].letter,
+        prompts: gameList[roomId].prompts,
         status: gameList[roomId].gameStatus,
       });
     }
@@ -61,19 +63,15 @@ module.exports = function (io, socket, roomList, userList, gameList) {
       socket.emit('join-game-failure', roomId);
     } else {
       console.log('joining game in room: ', roomId);
-      // If round has started, the round ind will be incremented, so to get correct propmpts we decrement
-      const roundNum =
-        gameList[roomId].gameStatus === GAME_STATUS.PRE_ROUND
-          ? gameList[roomId].round
-          : gameList[roomId].round - 1;
-      // If it's in progress, we don't want to allow the user to be able to enter stuff (or )
-      const inProgress = gameList[roomId].gameStatus !== GAME_STATUS.PRE_ROUND;
+      // If it's in progress, we don't want to allow the user to be able to enter stuff
+      const inProgress =
+        gameList[roomId].gameStatus === GAME_STATUS.ROUND_STARTED;
       const body = {
-        roundNum,
         letter: gameList[roomId].letter,
         prompts: gameList[roomId].prompts,
         status: gameList[roomId].gameStatus,
         answers: gameList[roomId].answers,
+        promptInd: gameList[roomId].promptInd,
         inProgress,
       };
       socket.emit('join-game-success', body);
@@ -84,14 +82,13 @@ module.exports = function (io, socket, roomList, userList, gameList) {
     let { roomId } = data;
     console.log('host start round', roomId);
     if (gameList[roomId].gameStatus !== GAME_STATUS.ROUND_STARTED) {
-      // increment round # in game
       gameList[roomId].gameStatus = GAME_STATUS.ROUND_STARTED;
-      gameList[roomId].round += 1; // Round starts at 0 when game started
-      gameList[roomId].playerCount = Object.keys(roomList[roomId].users).length; // Set player count to look for when turning in answers
+      gameList[roomId].players = { ...roomList[roomId].users }; // Set list of players to look for when turning in answers (wont count users who join in progress)
       gameList[roomId].answers = {};
-
+      gameList[roomId].scoreboard = generateScoreboard(
+        gameList[roomId].players
+      );
       // Start timer and game loop
-      console.log('starting timer');
       startRoundTimer(io, roomList, gameList[roomId], roomId);
     }
   });
@@ -105,33 +102,29 @@ module.exports = function (io, socket, roomList, userList, gameList) {
 
   socket.on('host-end-scoring', (data) => {
     let { roomId } = data;
-    // Go back to pre round
-    gameList[roomId].gameStatus = GAME_STATUS.PRE_ROUND;
-    //TODO: Get next letter and send that with EMIT
-    const letter = getLetter(LETTERS);
-    const prompts = getPrompts(10); // TODO: maybe customize # of prompts
-    gameList[roomId].letter = letter;
-    gameList[roomId].prompts = prompts;
+    setNewRound(gameList[roomId]);
     io.in(roomId).emit('emit-end-scoring', {
-      letter,
-      prompts,
+      letter: gameList[roomId].letter,
+      prompts: gameList[roomId].prompts,
       status: gameList[roomId].gameStatus,
     });
   });
 
   socket.on('host-switch-prompt', (data) => {
     let { roomId, promptInd } = data;
-    //TODO: track it here as well so when a user joins in progress they will be at the correct prompt
+    gameList[roomId].promptInd = promptInd;
     io.in(roomId).emit('emit-switch-prompt', { promptInd });
   });
 
   socket.on('host-change-answer-score', (data) => {
     let { roomId, promptInd, userId, earnedPoint } = data;
     gameList[roomId].answers[userId][promptInd].earnedPoint = earnedPoint;
+    gameList[roomId].scoreboard[userId].score += earnedPoint ? 1 : -1;
     io.in(roomId).emit('emit-change-answer-score', {
       promptInd,
       userId,
       earnedPoint,
+      scoreboard: gameList[roomId].scoreboard,
     });
   });
 
@@ -143,16 +136,23 @@ module.exports = function (io, socket, roomList, userList, gameList) {
 
   socket.on('user-turn-in-answers', (data) => {
     let { answers, roomId } = data;
+    // Take the raw answers from the user and build an object that can contain answers and their scores
     gameList[roomId].answers[socket.id] = buildUserAnswers(
       answers,
       socket.id,
       userList
     );
-    const len1 = Object.keys(gameList[roomId].answers).length;
-    console.log('user turned in answers: ', len1, gameList[roomId].playerCount);
-    if (len1 === gameList[roomId].playerCount) {
-      // Start scoring once all player clients have submitted their scores
-      // TODO: Do i need to send prompts?
+
+    // Removes player from 'players' list in the game & returns true if it's the last player
+    //   The player list will be refreshed next round start, so this allows us to know when everyone
+    //    has turned in their answsers (and it's dynamic per round)
+    const lastPlayer = checkAndRemovePlayerFromRound(
+      gameList,
+      roomId,
+      socket.id
+    );
+    // Start scoring once all player clients have submitted their scores
+    if (lastPlayer) {
       gameList[roomId].gameStatus = GAME_STATUS.SCORING;
       io.in(roomId).emit('emit-begin-scoring', { gameData: gameList[roomId] });
     }
@@ -162,9 +162,9 @@ module.exports = function (io, socket, roomList, userList, gameList) {
   socket.on('disconnecting', () => {
     let rooms = userList[socket.id];
     // Loop thru rooms deleting socket id
+    removePlayerFromGame(rooms, gameList, socket.id);
     rooms.forEach((key) => {
       if (gameList[key]) {
-        gameList[key].playerCount--;
         if (Object.keys(roomList[key].users).length === 0) {
           // Last user left, reset all game data
           console.log('all users left game - resetting data');

@@ -7,6 +7,7 @@ import { GAME_STATUS } from '../../constants/gameFlow';
 import {
   setPromptInd,
   setPointForAnswer,
+  setScoreboard,
   setPrompts,
   setGameStatus,
   setLetter,
@@ -18,7 +19,9 @@ class GameView extends React.Component {
       this.props.setPromptInd(promptInd);
     });
     this.props.ws.on('emit-change-answer-score', (data) => {
-      this.props.setPointForAnswer(data);
+      let { promptInd, userId, earnedPoint, scoreboard } = data;
+      this.props.setScoreboard(scoreboard);
+      this.props.setPointForAnswer({ userId, promptInd, earnedPoint });
     });
     this.props.ws.on('emit-end-scoring', (data) => {
       let { letter, prompts, status } = data;
@@ -50,4 +53,5 @@ export default connect(mapStateToProps, {
   setPrompts,
   setLetter,
   setGameStatus,
+  setScoreboard,
 })(withRouter(GameView));

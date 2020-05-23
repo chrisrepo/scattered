@@ -9,9 +9,9 @@ import {
   setRoom,
   setUsername,
   setPrompts,
+  setPromptInd,
   setLetter,
   setGameStatus,
-  setRound,
   setJoinedInProgress,
   setAnswers,
 } from './redux/actions';
@@ -65,10 +65,10 @@ class IOWrapper extends React.Component {
     });
 
     ws.on('join-game-success', (data) => {
-      let { letter, prompts, roundNum, status, inProgress, answers } = data;
+      let { letter, prompts, status, inProgress, answers, promptInd } = data;
       this.props.setLetter(letter);
       this.props.setPrompts(prompts);
-      this.props.setRound(roundNum);
+      this.props.setPromptInd(promptInd);
       this.props.setGameStatus(status);
       this.props.setJoinedInProgress(inProgress);
       this.props.setAnswers(answers);
@@ -162,7 +162,7 @@ export default connect(mapStateToProps, {
   setLetter,
   setPrompts,
   setGameStatus,
-  setRound,
   setJoinedInProgress,
   setAnswers,
+  setPromptInd,
 })(withRouter(IOWrapper));
