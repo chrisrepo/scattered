@@ -2,7 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
-import { setUsername, clearLobbyData } from '../../redux/actions';
+import { setUser, clearLobbyData } from '../../redux/actions';
+import { getRandomEmoji } from '../../utils/common';
 
 import './Login.css';
 class Login extends React.Component {
@@ -24,12 +25,15 @@ class Login extends React.Component {
     const username = this.inputRef.current.value;
 
     if (username.length > 0) {
+      const emoji = getRandomEmoji();
       // Store username in redux & session storage (so refreshes mean we can relog in the user)
-      this.props.setUsername(username);
+      this.props.setUser({ username, emoji });
       sessionStorage.setItem('sc-user', username);
       const body = {
+        emoji,
         username,
       };
+
       // Log in (and save user on backend)
       // Maybe show loading screen here
       this.props.ws.emit('log-in', body);
@@ -59,6 +63,6 @@ class Login extends React.Component {
 const mapStateToProps = (state) => ({
   ws: state.connection,
 });
-export default connect(mapStateToProps, { setUsername, clearLobbyData })(
+export default connect(mapStateToProps, { setUser, clearLobbyData })(
   withRouter(Login)
 );

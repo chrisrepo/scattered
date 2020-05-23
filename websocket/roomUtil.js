@@ -10,7 +10,7 @@ function joinRoom(roomId, roomList, socket, userList) {
   socket.join(roomId);
   roomList[roomId].users[socket.id] = {
     id: socket.id,
-    username: userList[socket.id].username,
+    ...userList[socket.id],
   };
   utils.updateHost(roomList, roomId);
 }

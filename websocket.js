@@ -53,9 +53,10 @@ var userList = {};
 //Setting up a socket with the namespace "connection" for new sockets
 io.on('connection', (socket) => {
   socket.on('log-in', (data) => {
-    let { username, rejoin } = data;
+    let { username, rejoin, emoji } = data;
     userList[socket.id] = {
       id: socket.id,
+      emoji,
       username,
     };
     //TODO:  We may need to pass back more data depending on where the user is rejoining from

@@ -7,12 +7,14 @@ const {
   checkAndRemovePlayerFromRound,
   removePlayerFromGame,
   generateScoreboard,
+  addPlayerToGame,
 } = require('./gameUtil');
 
 let guessTimeout;
 function startRoundTimer(io, lobby, game, roomId) {
   io.in(roomId).emit('emit-start-round', game);
   console.log('starting round timer : ', +game.timePerRound + ' seconds');
+  initiateTimeLeftInterval(game.timePerRound);
   guessTimeout = setTimeout(() => {
     endRound(io, lobby, game, roomId);
   }, game.timePerRound * 1000);
@@ -20,9 +22,22 @@ function startRoundTimer(io, lobby, game, roomId) {
 
 function endRound(io, lobby, game, roomId) {
   clearTimeout(guessTimeout);
+  clearInterval(remainingTimeInterval);
   game.gameStatus = GAME_STATUS.SCORING;
   io.in(roomId).emit('emit-end-round', { gameStatus: game.gameStatus });
   console.log('END ROUND in room: ', roomId);
+}
+
+let remainingTimeInterval;
+let remainingTime = 0;
+function initiateTimeLeftInterval(roundTime) {
+  remainingTime = roundTime;
+  remainingTimeInterval = setInterval(() => {
+    if (remainingTime === 0) {
+      clearInterval(remainingTimeInterval);
+    }
+    remainingTime--;
+  }, 1000);
 }
 
 function buildUserAnswers(answers, socketId, userList) {
@@ -48,10 +63,15 @@ module.exports = function (io, socket, roomList, userList, gameList) {
       io.in(roomId).emit('update-room', { roomData: roomList });
 
       setNewRound(gameList[roomId]);
+      gameList[roomId].players = { ...roomList[roomId].users };
+      gameList[roomId].scoreboard = generateScoreboard(
+        gameList[roomId].players
+      );
       io.in(roomId).emit('emit-start-game', {
         letter: gameList[roomId].letter,
         prompts: gameList[roomId].prompts,
         status: gameList[roomId].gameStatus,
+        scoreboard: gameList[roomId].scoreboard,
       });
     }
   });
@@ -66,13 +86,18 @@ module.exports = function (io, socket, roomList, userList, gameList) {
       // If it's in progress, we don't want to allow the user to be able to enter stuff
       const inProgress =
         gameList[roomId].gameStatus === GAME_STATUS.ROUND_STARTED;
+      // TODO: Does it matter if the game is in progress, if a user joins late, they can just send in no answer
+      addPlayerToGame(gameList[roomId], roomList[roomId], socket.id);
+      // TODO: CLEAN THIS UP. We can fold it all into one by just passing gameList & inProgress. Client side can handle destructuring cleanly w/typescript
       const body = {
         letter: gameList[roomId].letter,
         prompts: gameList[roomId].prompts,
         status: gameList[roomId].gameStatus,
         answers: gameList[roomId].answers,
         promptInd: gameList[roomId].promptInd,
+        scoreboard: gameList[roomId].scoreboard,
         inProgress,
+        remainingTime,
       };
       socket.emit('join-game-success', body);
     }
@@ -83,11 +108,9 @@ module.exports = function (io, socket, roomList, userList, gameList) {
     console.log('host start round', roomId);
     if (gameList[roomId].gameStatus !== GAME_STATUS.ROUND_STARTED) {
       gameList[roomId].gameStatus = GAME_STATUS.ROUND_STARTED;
+      // TODO: Remove any players who left the game??
       gameList[roomId].players = { ...roomList[roomId].users }; // Set list of players to look for when turning in answers (wont count users who join in progress)
       gameList[roomId].answers = {};
-      gameList[roomId].scoreboard = generateScoreboard(
-        gameList[roomId].players
-      );
       // Start timer and game loop
       startRoundTimer(io, roomList, gameList[roomId], roomId);
     }
@@ -171,6 +194,13 @@ module.exports = function (io, socket, roomList, userList, gameList) {
           resetGame(gameList, key);
           // After this, websocket.js will handle removal of user from rooms
         }
+        // Update the room with the new scoreboard
+        const body = {
+          answers: gameList[key].answers,
+          scoreboard: gameList[key].scoreboard,
+        };
+        console.log('io update game in: ', key);
+        io.in(key).emit('update-game', body);
       }
     });
   });

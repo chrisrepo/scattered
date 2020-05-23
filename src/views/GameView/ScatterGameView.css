@@ -1,22 +1,20 @@
 #scatter-game-view {
   display: flex;
-  flex-direction: row;
-  width: 95%;
-  height: 85%;
-  margin: 1% auto;
-  min-height: 500px;
+  flex-direction: column;
+  width: 75%;
 }
 
 #scatter-game-left {
   display: flex;
-  flex-direction: column;
-  width: 25%;
+  flex-direction: row;
+  justify-content: flex-start;
+  height: 15%;
   border: 3px solid #222;
-  border-right: none;
+  border-bottom: none;
 }
 
 #scatter-game-right {
-  width: 75%;
+  height: 85%;
   border: 3px solid #222;
 }
 

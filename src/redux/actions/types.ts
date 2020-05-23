@@ -7,6 +7,7 @@ import {
   SetJoinedInProgressAction,
   SetScoreboardAction,
 } from './gameFlow';
+import { SetUserAction } from './user';
 
 // Action Constants
 const gameFlowPrefix = 'GAME_FLOW/';
@@ -28,3 +29,11 @@ export type GameFlowAction =
   | SetPointForAnswerAction
   | SetJoinedInProgressAction
   | SetScoreboardAction;
+
+const userPrefix = 'USER/';
+
+export const UserActionTypes = {
+  setUser: `${userPrefix}SET_USER`,
+};
+
+export type UserAction = SetUserAction;

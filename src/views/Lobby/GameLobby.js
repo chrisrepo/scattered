@@ -6,19 +6,24 @@ import ChatBox from './ChatBox';
 import HostOptions from './HostOptions';
 
 import { isHost } from '../../utils/scattergories';
-import { setPrompts, setLetter, setGameStatus } from '../../redux/actions';
+import {
+  setPrompts,
+  setLetter,
+  setGameStatus,
+  setScoreboard,
+} from '../../redux/actions';
 import { safeGetIn } from '../../utils/common';
 import './GameLobby.css';
 class GameLobby extends React.Component {
   componentDidMount() {
     const route = `/game/${this.props.lobby.roomId}`;
     this.props.ws.on('emit-start-game', (data) => {
-      // TODO: on rejoin, there will probably be more data to handle from this emit
-      let { letter, prompts, status } = data;
+      let { letter, prompts, status, scoreboard } = data;
       console.log('gamelobby set prompts');
       this.props.setLetter(letter);
       this.props.setPrompts(prompts);
       this.props.setGameStatus(status);
+      this.props.setScoreboard(scoreboard);
       this.props.history.push(route);
     });
   }
@@ -64,4 +69,5 @@ export default connect(mapStateToProps, {
   setLetter,
   setPrompts,
   setGameStatus,
+  setScoreboard,
 })(withRouter(GameLobby));

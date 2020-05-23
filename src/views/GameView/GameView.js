@@ -8,10 +8,12 @@ import {
   setPromptInd,
   setPointForAnswer,
   setScoreboard,
+  setAnswers,
   setPrompts,
   setGameStatus,
   setLetter,
 } from '../../redux/actions';
+import GameContainer from './GameContainer';
 class GameView extends React.Component {
   componentDidMount() {
     this.props.ws.on('emit-switch-prompt', (data) => {
@@ -30,13 +32,19 @@ class GameView extends React.Component {
       this.props.setGameStatus(status);
       this.props.setLetter(letter);
     });
+    this.props.ws.on('update-game', (data) => {
+      let { scoreboard, answers } = data;
+      console.log('update game');
+      this.props.setScoreboard(scoreboard);
+      this.props.setAnswers(answers);
+    });
   }
   render() {
     let isScoring = this.props.status === GAME_STATUS.SCORING;
     if (isScoring) {
       return <ScoringView />;
     }
-    return <ScatterGameView />;
+    return <GameContainer />;
   }
 }
 
@@ -54,4 +62,5 @@ export default connect(mapStateToProps, {
   setLetter,
   setGameStatus,
   setScoreboard,
+  setAnswers,
 })(withRouter(GameView));

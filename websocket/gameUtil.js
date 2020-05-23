@@ -56,7 +56,9 @@ function removePlayerFromGame(rooms, gameList, userId) {
     // Check here to avoid rooms that dont host/have games
     if (gameList[key]) {
       if (gameList[key].players && gameList[key].players[userId]) {
+        delete gameList[key].answers[userId];
         delete gameList[key].players[userId];
+        delete gameList[key].scoreboard[userId];
       }
     }
   });
@@ -81,6 +83,12 @@ function generateScoreboard(players) {
   return scoreboard;
 }
 
+function addPlayerToGame(game, room, userId) {
+  let userData = room.users[userId];
+  game.players = userData;
+  game.scoreboard[userId] = { username: userData.username, score: 0 };
+}
+
 module.exports = {
   getLetter,
   getPrompts,
@@ -89,4 +97,5 @@ module.exports = {
   removePlayerFromGame,
   checkAndRemovePlayerFromRound,
   generateScoreboard,
+  addPlayerToGame,
 };

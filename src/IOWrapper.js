@@ -2,18 +2,20 @@ import React from 'react';
 import { connect } from 'react-redux';
 import io from 'socket.io-client';
 import { withRouter } from 'react-router-dom';
-
+import { getRandomEmoji } from './utils/common';
 import {
+  // TODO: Maybe i can fold all actions under a parent object (ie. gameFlow.setLetter gameFlow.setAnswers etc and just import the object)
   setWebsocketConnection,
   setRoomData,
   setRoom,
-  setUsername,
+  setUser,
   setPrompts,
   setPromptInd,
   setLetter,
   setGameStatus,
   setJoinedInProgress,
   setAnswers,
+  setScoreboard,
 } from './redux/actions';
 import {
   getRoomIdFromPathName,
@@ -65,13 +67,26 @@ class IOWrapper extends React.Component {
     });
 
     ws.on('join-game-success', (data) => {
-      let { letter, prompts, status, inProgress, answers, promptInd } = data;
+      let {
+        letter,
+        prompts,
+        status,
+        inProgress,
+        answers,
+        promptInd,
+        scoreboard,
+      } = data;
       this.props.setLetter(letter);
       this.props.setPrompts(prompts);
       this.props.setPromptInd(promptInd);
       this.props.setGameStatus(status);
       this.props.setJoinedInProgress(inProgress);
       this.props.setAnswers(answers);
+      this.props.setScoreboard(scoreboard);
+      if (inProgress) {
+        // TODO: handle time remaining for midgame joins
+        console.log('join in progress, time left', data.remainingTime);
+      }
     });
 
     // Could not rejoin game
@@ -95,16 +110,19 @@ class IOWrapper extends React.Component {
   handleInitialConnection = (ws, path) => {
     // Before trying to reconnect, make sure there was a username saved in session
     let username = sessionStorage.getItem('sc-user');
+    const emoji = getRandomEmoji();
     if (!this.props.user.username && username) {
-      this.props.setUsername(username);
+      this.props.setUser({ username, emoji });
     }
     // Reroute if username empty
     if (!username && !this.props.user.username) {
       this.props.history.push('/');
+      return;
     }
 
     const body = {
       username,
+      emoji,
       rejoin: getRoomIdFromPathName(path),
     };
     this.props.ws.emit('log-in', body);
@@ -158,11 +176,12 @@ export default connect(mapStateToProps, {
   setWebsocketConnection,
   setRoom,
   setRoomData,
-  setUsername,
+  setUser,
   setLetter,
   setPrompts,
   setGameStatus,
   setJoinedInProgress,
   setAnswers,
   setPromptInd,
+  setScoreboard,
 })(withRouter(IOWrapper));

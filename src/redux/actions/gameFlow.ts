@@ -51,13 +51,13 @@ export const setPointForAnswer = (
 
 export interface SetJoinedInProgressAction {
   type: typeof GameFlowActionTypes.setJoinedInProgress;
-  payload: boolean;
+  payload: JoinInProgressData;
 }
 export const setJoinedInProgress = (
-  inProgress: boolean
+  data: JoinInProgressData
 ): SetJoinedInProgressAction => ({
   type: GameFlowActionTypes.setJoinedInProgress,
-  payload: inProgress,
+  payload: data,
 });
 
 export interface SetScoreboardAction {
@@ -80,7 +80,10 @@ export interface Answer {
 export interface AnswerContainer {
   [key: string]: Answer[];
 }
-
+export interface JoinInProgressData {
+  inProgress: boolean;
+  timeRemaining: number;
+}
 export interface SetAnswerData {
   promptInd: number;
   userId: string;

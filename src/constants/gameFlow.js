@@ -12,6 +12,7 @@ const INITIAL_REDUCER_STATE = {
   timePerRound: GAME_CONFIG.timePerRound, // TODO: maybe create config for defaults (this & prompt count/ round count)
   round: 0,
   joinedInProgress: false,
+  timeRemaining: 0,
   gameStatus: GAME_STATUS.PRE_ROUND,
   currentLetter: '',
   currentPrompt: 0, // For going thru prompts
@@ -26,7 +27,7 @@ const CREATE_INITIAL_GAME_CONFIG = () => {
     round: 0,
     promptInd: 0,
     gameStatus: GAME_STATUS.PRE_ROUND,
-    answers: [], // array of answers (indexed by question number)
+    answers: {}, // array of answers (indexed by question number)
     // each index will have a map where each key is a socket id of a playing user
     // answer will be key= socket.id value={text: answer, username: user.username, earnedPoint: false}
     prompts: [],

@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import LetterView from './LetterView';
 import TimerView from './TimerView';
 import ScattergoriesView from './ScattergoriesView';
+import HostActions from './HostActions';
 
 import {
   setPrompts,
@@ -54,7 +55,13 @@ class ScatterGameView extends React.Component {
       // Now that the round is being scored, we can set joined in progress to false
       //  this will allow users who joined late to be able to play next round
       if (this.props.gameFlow.joinedInProgress) {
-        this.props.setJoinedInProgress(false);
+        this.props.setJoinedInProgress(false, 0);
+      }
+    });
+
+    this.props.ws.on('join-game-success', (data) => {
+      if (data.joinedInProgress) {
+        console.log('time left when joining: ', data.remainingTime);
       }
     });
   }
@@ -99,6 +106,7 @@ class ScatterGameView extends React.Component {
     return (
       <div id="scatter-game-view">
         <div id="scatter-game-left">
+          {hosting && <HostActions roundStarted={roundStarted} />}
           <LetterView
             isHost={hosting}
             roundStarted={roundStarted}

@@ -3,12 +3,14 @@ import {
   AnswerContainer,
   SetAnswerData,
   Scoreboard,
+  JoinInProgressData,
 } from '../actions/gameFlow';
 import { GameFlowAction, GameFlowActionTypes } from '../actions/types';
 
 interface GameFlow {
   timePerRound: number;
   joinedInProgress: boolean;
+  timeRemaining: number; // Only for when users join in progress
   gameStatus: string;
   currentLetter: string;
   currentPrompt: number;
@@ -42,8 +44,13 @@ export const flowReducer = (
       });
     }
     case GameFlowActionTypes.setJoinedInProgress: {
+      const {
+        inProgress,
+        timeRemaining,
+      } = action.payload as JoinInProgressData;
       return Object.assign({}, state, {
-        joinedInProgress: action.payload,
+        joinedInProgress: inProgress,
+        timeRemaining: timeRemaining,
       });
     }
     case GameFlowActionTypes.setScoreboard: {

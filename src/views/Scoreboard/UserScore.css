@@ -1,0 +1,4 @@
+.user-score-container {
+  display: flex;
+  flex-direction: row;
+}
