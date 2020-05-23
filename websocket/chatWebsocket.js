@@ -2,9 +2,9 @@ const { joinRoom, leaveRoom, sendUpdatesToRooms } = require('./roomUtil.js');
 
 module.exports = function (io, socket, roomList, userList) {
   socket.on('on-chat', (data) => {
-    const { roomId, username, message } = data;
+    const { roomId, username, message, emoji } = data;
     if (roomId) {
-      io.in(roomId).emit('emit-chat', { username, message });
+      io.in(roomId).emit('emit-chat', { username, emoji, message });
     }
   });
 

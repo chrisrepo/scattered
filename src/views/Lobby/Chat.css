@@ -2,18 +2,32 @@
   border: 3px solid #444;
   max-height: 90%;
   flex-grow: 1;
-  box-shadow: 2px 2px 4px #999;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
 #chat-messages {
-  height: 90%;
+  height: 94%;
   padding: 1em;
   overflow-y: scroll;
   display: flex;
   flex-direction: column;
+}
+
+#send-chat-button {
+  height: 65%;
+  cursor: pointer;
+  padding: 3px 7px;
+  background-color: #444;
+  color: white;
+  font-weight: 500;
+  align-self: center;
+  line-height: 1.6em;
+}
+
+#send-chat-button:hover {
+  background-color: #999;
 }
 
 .chat-message-container:not(:first-child) {
@@ -42,12 +56,13 @@
 #chat-input {
   width: 100%;
   background-color: #ddd;
-  height: 10%;
+  height: 6%;
   display: flex;
 }
 
 #chat-input input {
   margin: 4px 4px;
+  flex-grow: 0.8;
   padding-left: 10px;
   width: 85%;
   font-size: 1.2em;

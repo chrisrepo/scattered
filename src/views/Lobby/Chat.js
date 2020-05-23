@@ -14,12 +14,23 @@ class Chat extends React.Component {
   componentDidMount() {
     this._isMounted = true;
     this.props.ws.on('emit-chat', (data) => {
-      this.addChatMessage(data.username, data.message);
+      this.addChatMessage(data.username, data.message, data.emoji);
     });
     this.addChatMessage(
       undefined,
-      `You have joined the ${this.props.lobby.roomId} chat`
+      `You have joined the ${this.props.lobby.roomId} chat`,
+      undefined
     );
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.lobby.roomId !== prevProps.lobby.roomId) {
+      this.addChatMessage(
+        undefined,
+        `You have joined the ${this.props.lobby.roomId} chat`,
+        undefined
+      );
+    }
   }
 
   componentWillUnmount() {
@@ -37,6 +48,7 @@ class Chat extends React.Component {
       let body = {
         roomId: this.props.lobby.roomId,
         username: this.props.user.username,
+        emoji: this.props.user.emoji,
         message: this.state.inputVal,
       };
       this.props.ws.emit('on-chat', body);
@@ -44,10 +56,13 @@ class Chat extends React.Component {
     }
   };
 
-  addChatMessage = (username, message) => {
+  addChatMessage = (username, message, emoji) => {
     if (this._isMounted) {
       this.setState({
-        messages: [...this.state.messages, { user: username, text: message }],
+        messages: [
+          ...this.state.messages,
+          { user: username, text: message, emoji },
+        ],
       });
     }
   };
@@ -58,7 +73,10 @@ class Chat extends React.Component {
       if (msg.user) {
         userPrefix = (
           <span className="chat-identifier">
-            <span className="chat-user">{msg.user}:</span>
+            <span className="chat-user">
+              {msg.emoji}
+              {msg.user}:
+            </span>
           </span>
         );
       }
@@ -81,7 +99,9 @@ class Chat extends React.Component {
           value={this.state.inputVal}
           onChange={(e) => this.updateInput(e)}
         />
-        <button onClick={() => this.sendChatMessage()}>Send</button>
+        <div id="send-chat-button" onClick={() => this.sendChatMessage()}>
+          Send
+        </div>
       </div>
     );
   }
