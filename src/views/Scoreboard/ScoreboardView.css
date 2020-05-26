@@ -1,0 +1,48 @@
+#scoreboard-view {
+  width: '25%';
+  margin-right: '1em';
+  border: '3px solid #222';
+}
+.scoreboard-row-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.scoreboard-row-header {
+  display: flex;
+  flex-direction: row;
+  font-size: 1.6em;
+  font-weight: 500;
+  border-bottom: 3px solid #222;
+}
+
+.scoreboard-row-header .left {
+  padding-left: 10px;
+  width: 70%;
+}
+
+.scoreboard-row-header .right {
+  padding-left: 10px;
+  border-left: 3px solid #222;
+}
+
+.scoreboard-row {
+  padding: 5px;
+  display: flex;
+  flex-direction: row;
+}
+
+.scoreboard-row:hover {
+  background-color: #666;
+  color: white;
+}
+
+.scoreboard-row .left {
+  padding-left: 10px;
+  width: 75%;
+}
+
+.scoreboard-row .right {
+  padding-left: 10px;
+  width: 25%;
+}

@@ -100,6 +100,11 @@ module.exports = function (io, socket, roomList, userList, gameList) {
         remainingTime,
       };
       socket.emit('join-game-success', body);
+      const body2 = {
+        answers: gameList[roomId].answers,
+        scoreboard: gameList[roomId].scoreboard,
+      };
+      io.in(roomId).emit('update-game', body2);
     }
   });
 
@@ -126,6 +131,8 @@ module.exports = function (io, socket, roomList, userList, gameList) {
   socket.on('host-end-scoring', (data) => {
     let { roomId } = data;
     setNewRound(gameList[roomId]);
+    // Re-add players
+    gameList[roomId].players = { ...roomList[roomId].users };
     io.in(roomId).emit('emit-end-scoring', {
       letter: gameList[roomId].letter,
       prompts: gameList[roomId].prompts,
@@ -185,6 +192,7 @@ module.exports = function (io, socket, roomList, userList, gameList) {
   socket.on('disconnecting', () => {
     let rooms = userList[socket.id];
     // Loop thru rooms deleting socket id
+    console.log('disconnecting from ', rooms);
     removePlayerFromGame(rooms, gameList, socket.id);
     rooms.forEach((key) => {
       if (gameList[key]) {
@@ -199,7 +207,6 @@ module.exports = function (io, socket, roomList, userList, gameList) {
           answers: gameList[key].answers,
           scoreboard: gameList[key].scoreboard,
         };
-        console.log('io update game in: ', key);
         io.in(key).emit('update-game', body);
       }
     });

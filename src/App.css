@@ -2,3 +2,24 @@
   width: 100vw;
   height: 100vh;
 }
+
+html {
+  /*--major-background: #29335c;
+  --container-background: #84afe6;
+  --container-background2: #3d5a80;
+  --chat-background: #d1d2f9;
+  background: repeating-linear-gradient(
+    -45deg,
+    #39aaf8,
+    #39aaf8 10px,
+    #229ff9 10px,
+    #229ff9 20px
+  );
+  */
+
+  --major-background: #6c809a;
+  --container-background: #1b4079;
+  --container-background-lighten: #1b5079;
+  --user-background: #84afe6;
+  --chat-background: #84afe6;
+}

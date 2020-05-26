@@ -78,15 +78,23 @@ function checkAndRemovePlayerFromRound(gameList, roomId, userId) {
 function generateScoreboard(players) {
   let scoreboard = {};
   for (let userId in players) {
-    scoreboard[userId] = { username: players[userId].username, score: 0 };
+    scoreboard[userId] = {
+      username: players[userId].username,
+      emoji: players[userId].emoji,
+      score: 0,
+    };
   }
   return scoreboard;
 }
 
 function addPlayerToGame(game, room, userId) {
   let userData = room.users[userId];
-  game.players = userData;
-  game.scoreboard[userId] = { username: userData.username, score: 0 };
+  game.players[userId] = userData;
+  game.scoreboard[userId] = {
+    username: userData.username,
+    emoji: userData.emoji,
+    score: 0,
+  };
 }
 
 module.exports = {

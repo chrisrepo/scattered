@@ -93,6 +93,7 @@ export interface SetAnswerData {
 export interface Scoreboard {
   [key: string]: {
     username: string;
+    emoji: string;
     score: number;
   };
 }

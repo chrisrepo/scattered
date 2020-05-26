@@ -34,7 +34,7 @@ class GameView extends React.Component {
     });
     this.props.ws.on('update-game', (data) => {
       let { scoreboard, answers } = data;
-      console.log('update game');
+      console.log('update game', scoreboard);
       this.props.setScoreboard(scoreboard);
       this.props.setAnswers(answers);
     });
