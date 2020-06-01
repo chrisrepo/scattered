@@ -1,5 +1,12 @@
 #scoring-view-container {
-  margin: 3% 10%;
+  margin: 2em 5em;
+  display: flex;
+  flex-direction: row;
+  height: 90%;
+}
+
+#score-container {
+  width: 75%;
   display: flex;
   flex-direction: column;
   align-items: center;
