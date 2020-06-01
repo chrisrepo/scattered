@@ -51,17 +51,15 @@ function setNewRound(game) {
 }
 
 // Removes the player from the game's player list
-function removePlayerFromGame(rooms, gameList, userId) {
-  rooms.forEach((key) => {
-    // Check here to avoid rooms that dont host/have games
-    if (gameList[key]) {
-      if (gameList[key].players && gameList[key].players[userId]) {
-        delete gameList[key].answers[userId];
-        delete gameList[key].players[userId];
-        delete gameList[key].scoreboard[userId];
-      }
+function removePlayerFromGame(game, socket) {
+  if (game) {
+    let id = socket.id;
+    if (game.scoreboard !== undefined && game.scoreboard[id] !== undefined) {
+      delete game.scoreboard[id];
+      delete game.answers[id];
+      delete game.players[id];
     }
-  });
+  }
 }
 
 // Returns true if last player has turned in their answers;

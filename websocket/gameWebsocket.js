@@ -193,9 +193,9 @@ module.exports = function (io, socket, roomList, userList, gameList) {
     let rooms = userList[socket.id];
     // Loop thru rooms deleting socket id
     console.log('disconnecting from ', rooms);
-    removePlayerFromGame(rooms, gameList, socket.id);
     rooms.forEach((key) => {
       if (gameList[key]) {
+        removePlayerFromGame(gameList[key], socket);
         if (Object.keys(roomList[key].users).length === 0) {
           // Last user left, reset all game data
           console.log('all users left game - resetting data');
