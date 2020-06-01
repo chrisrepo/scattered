@@ -43,7 +43,10 @@ class Login extends React.Component {
   render() {
     return (
       <div id="login-container">
-        <h1>Scattergories</h1>
+        <div id="login-header">
+          <div id="game-name">Scattered</div>
+          <div id="game-subheader">'Scattergories Online'</div>
+        </div>
         <div id="login-field">
           <label id="login-label">Name</label>
           <input

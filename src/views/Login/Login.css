@@ -18,3 +18,23 @@
   padding: 1%;
   width: 100px;
 }
+
+#login-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+}
+
+#game-name {
+  font-size: 3em;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+}
+
+#game-subheader {
+  font-weight: 500;
+  color: #555;
+}
