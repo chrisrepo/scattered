@@ -19,7 +19,6 @@ class GameLobby extends React.Component {
     const route = `/game/${this.props.lobby.roomId}`;
     this.props.ws.on('emit-start-game', (data) => {
       let { letter, prompts, status, scoreboard } = data;
-      console.log('gamelobby set prompts');
       this.props.setLetter(letter);
       this.props.setPrompts(prompts);
       this.props.setGameStatus(status);

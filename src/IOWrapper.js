@@ -55,7 +55,6 @@ class IOWrapper extends React.Component {
         }
         case PATH_TYPES.GAME: {
           // Handle game specific data
-          console.log('need to fetch game data on rejoin');
           ws.emit('join-game', { roomId });
           break;
         }

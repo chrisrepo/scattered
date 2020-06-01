@@ -33,8 +33,6 @@ class ScatterGameView extends React.Component {
       this.props.setLetter(letter);
     });
     this.props.ws.on('emit-start-round', (data) => {
-      console.log('round started: ', data);
-      //TODO: set initial values
       this.props.setGameStatus(data.gameStatus);
       //TODO: start timer countdown
     });
@@ -44,12 +42,10 @@ class ScatterGameView extends React.Component {
         roomId: this.props.lobby.roomId,
         answers: this.props.answers,
       };
-      console.log('round ended, sending answers', body);
       this.props.ws.emit('user-turn-in-answers', body);
     });
     this.props.ws.on('emit-begin-scoring', (data) => {
       let { gameData } = data;
-      console.log('begin scoring: ', gameData.answers);
       this.props.setGameStatus(GAME_STATUS.SCORING);
       this.props.setAnswers(gameData.answers);
       // Now that the round is being scored, we can set joined in progress to false

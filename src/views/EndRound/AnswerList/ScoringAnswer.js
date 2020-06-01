@@ -10,7 +10,6 @@ class ScoringAnswer extends React.Component {
       userId: this.props.userId,
       earnedPoint: !getsPoint,
     };
-    console.log('change answer', body);
     this.props.ws.emit('host-change-answer-score', body);
   };
 
